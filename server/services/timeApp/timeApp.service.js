@@ -2,8 +2,8 @@
 
 import _ from 'lodash';
 import Promise from 'bluebird';
-
 import Browser from 'zombie';
+import request from 'request';
 
 import config from './../../config';
 import utils from '../../utils/utils';
@@ -70,6 +70,43 @@ export function login(email, password) {
     });
   });
 }
+
+/**
+ * @param {String} sessionId
+ * @return {Promise<{}>}
+ */
+export function generateReport(sessionId) {
+  return new Promise((resolve, reject) => {
+    request({
+      method: 'post',
+      uri: __baseUrl + '/data/printer/userReports',
+      formData: {
+        printGlobals: 'printInterval=1&printDateFrom=2016-01-01&printDateTo=2016-07-31&printSort=0&printInvoiced=yes&printOrientation=0&printFormat=1',
+        printTitle: 'Sammanställning per användare osv',
+        printFilter: 'report',
+      },
+      headers: {
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Cookie': `PHPSESSID=${sessionId}`,
+      },
+    }, function (err, res, body) {
+      const _rows = body.split('\r\n');
+      const _keys = _rows[0].split('\t');
+
+      const data = _.chain(_rows.slice(1))
+        .map(line => line.split('\t'))
+        .map(values => _.reduce(values, (obj, val, i) => _.assign({}, obj, _.set({}, _keys[i], val)), {}))
+        .value();
+
+      resolve({ rows: data, keys: _keys });
+    });
+  });
+}
+
+// login(config.timeApp.email, config.timeApp.password)
+// .then(({sessionId}) => generateReport(sessionId))
+// .then(data => console.log(data))
+// .catch(err => console.log(err));
 
 export default {
   login: login,
