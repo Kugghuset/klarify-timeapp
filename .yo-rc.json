@@ -1,0 +1,14 @@
+{
+  "generator-js-mssql": {
+    "name": "klarify_timeapp",
+    "version": "0.0.0",
+    "description": "An automation of generating reports from TimeApp",
+    "author": "Kristoffer Östlund",
+    "git": {
+      "url": "https://github.com/Kugghuset/klarify-timeapp",
+      "branch": "master",
+      "rawUrl": "https://github.com/Kugghuset/klarify-timeapp.git"
+    },
+    "license": "MIT"
+  }
+}
