@@ -2,10 +2,11 @@
 
 import _ from 'lodash';
 import DataObjectParser from 'dataobject-parser';
-import sql from 'seriate';
+import seriate from 'seriate';
 import mssql from 'mssql';
 import path from 'path';
 
+import _sql, { getConnection } from './utils.sql';
 import _http from './utils.http';
 import _logger from './utils.logger';
 
@@ -195,7 +196,7 @@ export const guid = () => {
  * @return {Array}
  */
 export const parseSQLCreateTable = (fileContents, skipNames = [], skipIdentity = true, __sql = mssql) => {
-  let _output = _.attempt(() => {
+  const _output = _.attempt(() => {
     return fileContents
       // Match everything inside the create table statement
       .match(/(CREATE TABLE.*\()([\S\s]*)(?=\)\s)/i)[2]
@@ -278,7 +279,7 @@ export const dropTable = (tableName, database) => new Promise ((resolve, reject)
   console.log(`Dropping table ${_tablePath}`);
 
   // Drop the table!
-  sql.execute({
+  seriate.execute({
     query: _query
   })
   .then((data) => resolve(data))
@@ -292,17 +293,38 @@ export const dropTable = (tableName, database) => new Promise ((resolve, reject)
  * @param {String} baseName Base of name for the sql files
  * @param {String} mainId Name of the main id column in the table. Defaults to *baseName* + 'Id'
  * @param {Array} skipNames Array of column names to skip in creating the table. Identity columns will be skipped. Defaults to ['isDisabled', 'dateUpdated', 'dateCreated']
+ * @param {Boolean} returnValues Boolean value of whether the values of the insert should be returned or not. Defaults to true.
  * @return {Promise} -> {Array}
  */
-export const createManySQL = (collection, tableName, dirname, baseName, mainId, skipNames = ['isDisabled', 'dateUpdated', 'dateCreated']) => new Promise((resolve, reject) => {
+export const createManySQL = (collection, tableName, dirname, baseName, mainId, skipNames = ['isDisabled', 'dateUpdated', 'dateCreated'], returnValues = true) => new Promise((resolve, reject) => {
   // Ensure mainId is defined
   if (!mainId) { mainId = `${baseName}Id`; }
 
-  // Create the temp table
-  let _table = new mssql.Table(tableName);
+  // Use with output
+  const _isArray = _.isArray(collection);
 
+  // Allow either objects or arrays.
+  const _collection = _isArray
+    ? collection
+    : [collection];
+
+  if (!_collection || !_collection.length) {
+    return resolve([]);
+  }
+
+  // Create the temp table
+  const _table = new mssql.Table(tableName);
+
+  let _columns;
   // Get the column definitions for the table, execpt for the IDS
-  let _columns = parseSQLCreateTable(sql.fromFile(path.resolve(dirname, `./sql/${baseName}.initialize.sql`)), skipNames);
+  try {
+    _columns = parseSQLCreateTable(seriate.fromFile(path.resolve(dirname, `./sql/${baseName}.initialize.sql`)), skipNames);
+
+  } catch (error) {
+    console.log(error);
+
+    return reject();
+  }
 
   // Set table creation to true, to ensure the table is created if it doesn't exist,
   // which it shouldn't do
@@ -314,33 +336,64 @@ export const createManySQL = (collection, tableName, dirname, baseName, mainId, 
   });
 
   // Add all rows
-  _.forEach(collection, (item) => {
-    // Get all parameters from the telList in the order of the column names
-    let _data = _.map(_columns, (col) => item[col.name]);
+  _.forEach(_collection, (item) => {
+    // Get all parameters from the items in the order of the column names
+    const _data = _.map(_columns, (col) => {
+      // Get shorthand for the value
+      const _value = item[col.name];
+
+      // If any of these are true, a null value should be returned
+      const _criteria = [
+          (_value || '').toString() === 'NaN',
+          _value === 'NaN',
+          _.isUndefined(_value),
+          /Int/.test(col.type.type || col.type) && isNaN(_value)
+        ];
+
+      const _type = col.type.type || col.type;
+
+      // Tedious doesn't seem to like undefined values when parsing Integers
+      if (_.some(_criteria)) {
+        // The value is eitehr NaN or undefined,
+        // which is better handled as null
+        return null;
+      } else if (/Int/.test(col.type.type || col.type)) {
+        return parseInt(_value);
+      } else {
+        return _value;
+      }
+    });
 
     // Add the row
     _table.rows.add(..._data);
   });
 
+  let _request;
+
   // Create a request instace and make the bulk operation
-  new mssql.Connection(config.db).connect()
-  .then((connection) => {
+  return getConnection()
+    .then((connection) => {
     // Get the current request
-    let _request = new mssql.Request(connection);
+    _request = new mssql.Request(connection);
 
     return _request.bulk(_table);
   })
   .then((rowCount) => {
+    if (!returnValues) {
+      return resolve(rowCount);
+    }
 
     // Query the DB and return the latest inserts
-    return sql.execute({
-      query: sql.fromFile(path.resolve(dirname, `./sql/${baseName}.find.sql`))
-        .replace('SELECT', `SELECT TOP ${rowCount}`)
-        + `ORDER BY [${mainId}] DESC`
+    return seriate.execute({
+      query: `SELECT * FROM ${tableName}`,
+      // query: seriate.fromFile(path.resolve(dirname, `./sql/${baseName}.find.sql`))
+      //   .replace('SELECT', `SELECT TOP ${rowCount}`)
+      //   .replace(new RegExp(`\\[dbo\\]\\.\\[${baseName}\\]`, 'ig'), `[dbo].[${tableName}]`)
+      //   + `ORDER BY [${mainId}] DESC`
     });
   })
   // Objectify, reverse and resolve the data
-  .then((telList) => resolve(objectify(telList).reverse()))
+  .then((items) => resolve(_isArray ? objectify(items).reverse() : objectify(items[0])))
   .catch(reject);
 });
 
@@ -406,4 +459,5 @@ export default {
   headBy: headBy,
   getCookie: getCookie,
   print: print,
+  sql: _sql,
 }

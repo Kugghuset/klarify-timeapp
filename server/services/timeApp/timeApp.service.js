@@ -9,7 +9,7 @@ import moment from 'moment';
 import config from './../../config';
 import utils from '../../utils/utils';
 
-const __baseUrl = 'https://redovisa.timeapp.se';
+import TimeAppEmployee from './../../api/timeAppEmployee/timeAppEmployee.db';
 
 /**
  * TODO:
@@ -17,9 +17,38 @@ const __baseUrl = 'https://redovisa.timeapp.se';
  * - Figure out how long a session lasts
  */
 
-/****************
- * Exports below
- ****************/
+/**
+ * Tries to get the first name, last name and full name from *fullName*
+ * and returns all as an object
+ *
+ * @param {String} fullName
+ * @return {{ firstName: String, lastName: String, name: String }}
+ */
+function getNameObject(fullName) {
+  // Get an array of all names
+  const _namesArr = fullName.split(' ');
+
+  // Get all name parts
+  const firstName = _namesArr.shift();
+  const lastName = _namesArr.pop();
+
+  return { firstName, lastName, name: fullName };
+}
+
+export const baseUrl = 'https://redovisa.timeapp.se';
+
+export const reportKeys = Object.freeze({
+  TYPE: 0,
+  EMPLOYEE: 1,
+  DATE: 2,
+  CUSTOMER: 3,
+  PROJECT: 4,
+  COMMENT: 5,
+  CODE: 6,
+  QUANTITY: 7,
+  PRICE: 8,
+  SUM: 9,
+});
 
 /**
  * @param {String} email The email of the user to log in
@@ -34,7 +63,7 @@ export function login(email, password) {
   const _meta = { email };
 
   return new Promise((resolve, reject) => {
-    const _url = __baseUrl + '/login';
+    const _url = baseUrl + '/login';
     utils.log(`Visiting ${_url}`, 'info', _meta);
     browser.visit(_url, () => {
       // Get all inputs of type text and password
@@ -150,11 +179,11 @@ export function generateReport(context) {
 
     request({
       method: 'post',
-      uri: __baseUrl + '/data/printer/userReports',
+      uri: baseUrl + '/data/printer/userReports',
       formData: {
         printGlobals: `printInterval=1&printDateFrom=${_dateFrom}&printDateTo=${_dateTo}&printSort=0&printInvoiced=yes&printArchived=yes&printOrientation=0&printFormat=1`,
-        printTitle: 'Sammanställning per användare osv',
-        printFilter: 'report',
+        printTitle: 'Sammanställning per användare',
+        printFilter: _filter,
       },
       headers: {
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
@@ -204,12 +233,40 @@ export function generateReport(context) {
   });
 }
 
+export function structureReport(context) {
+  const {
+    rows,
+    keys,
+  } = context;
+
+  const _employeeNames = _.chain(rows)
+    // Get only the epmloyees
+    .map(keys[reportKeys.EMPLOYEE])
+    // Get unique entries only
+    .uniq()
+    // Create name objects
+    .map(getNameObject)
+    .value();
+
+  /**
+   * TODO: After merging raw employees into TimeAppEmployee,
+   *       we should do the same with the other rows
+   *       and then merge them into FactKugghuset.
+   */
+
+  return TimeAppEmployee.mergeMany(_employeeNames)
+  .then(Promise.resolve);
+}
+
 // login(config.timeApp.email, config.timeApp.password)
 // .then(generateReport)
-// .then(() => {})
-// .catch(err => {});
+// .then(structureReport)
+// .catch(err => utils.print(err));
 
 export default {
+  baseUrl: baseUrl,
+  reportKeys: reportKeys,
   login: login,
   generateReport: generateReport,
+  structureReport: structureReport,
 }
