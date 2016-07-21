@@ -51,7 +51,7 @@ export const escapeRegex = (text) => {
  *
  * @param {String} text
  * @param {String} flags - optional
- * @return {Object} - RegExp object
+ * @return {RegExp} - RegExp object
  */
 export const literalRegExp = (text, flags) => {
   return new RegExp(escapeRegex(text), flags);
@@ -369,6 +369,25 @@ export function getCookie(cookie, name) {
   return (new RegExp(name + '=([^;]+)').exec(cookie) || [])[1] || null;
 }
 
+/**
+ * @param {Any} message The message to print
+ * @param {Number} verticalPadding Vertical padding as number of '\n', if 0 then none.
+ * @param {Boolean} asIs Should *message* be printed as is? Defaults to false
+ */
+export const print = (message, verticalPadding = 0, asIs = false) => {
+  if (!!verticalPadding) { console.log(_.times(verticalPadding, () => '\n').join('')); }
+  if (_.some([
+    _.isError(message),
+    _.isString(message),
+    _.isNumber(message),
+    _.isUndefined(message),
+  ])) { asIs = true; }
+  log(
+    !!asIs ? message : JSON.stringify(message, null, 4)
+  );
+  if (!!verticalPadding) { console.log(_.times(verticalPadding, () => '\n').join('')); }
+}
+
 export default {
   http: http,
   logger: logger,
@@ -386,4 +405,5 @@ export default {
   createManySQL: createManySQL,
   headBy: headBy,
   getCookie: getCookie,
+  print: print,
 }
