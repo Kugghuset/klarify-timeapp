@@ -152,7 +152,7 @@ export function generateReport(context) {
       method: 'post',
       uri: __baseUrl + '/data/printer/userReports',
       formData: {
-        printGlobals: `printInterval=1&printDateFrom=${_dateFrom}&printDateTo=${_dateTo}&printSort=0&printInvoiced=yes&printOrientation=0&printFormat=1`,
+        printGlobals: `printInterval=1&printDateFrom=${_dateFrom}&printDateTo=${_dateTo}&printSort=0&printInvoiced=yes&printArchived=yes&printOrientation=0&printFormat=1`,
         printTitle: 'Sammanställning per användare osv',
         printFilter: 'report',
       },
@@ -203,6 +203,11 @@ export function generateReport(context) {
     });
   });
 }
+
+// login(config.timeApp.email, config.timeApp.password)
+// .then(generateReport)
+// .then(() => {})
+// .catch(err => {});
 
 export default {
   login: login,
