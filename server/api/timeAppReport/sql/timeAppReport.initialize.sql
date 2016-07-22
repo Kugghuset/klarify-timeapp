@@ -14,8 +14,8 @@ BEGIN
     , [comment] VarChar(MAX) NULL
     , [code] VarChar(255) NULL
     , [quantity] Float NULL
-    , [price] Int NULL
-    , [sum] Int NULL
+    , [price] Float NULL
+    , [sum] Float NULL
     , [employeeId] BigInt NULL
     , [timeAppEmployeeId] BigInt NULL
     , [isUpdated] Bit DEFAULT 1 NULL

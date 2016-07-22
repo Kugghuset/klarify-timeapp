@@ -22,6 +22,11 @@ export const logger = _logger;
  */
 export const log = (message, level = "info", meta) => _.isUndefined(meta) ? logger.log(level, message) : logger.log(level, message, meta);
 
+export function logPromise(data, message, level, meta) {
+  log(message, level, meta);
+  return Promise.resolve(data);
+}
+
 /**
  * Calls sends a response to the user of 500: Internal Error
  * and logs the actual error.
@@ -371,6 +376,12 @@ export const createManySQL = (collection, tableName, dirname, baseName, mainId, 
 
   let _request;
 
+  /**
+   * TODO: Allow for batch size to be set.
+   *       Apparently Azure doesn't like it when we inserts
+   *       too many rows at once.
+   */
+
   // Create a request instace and make the bulk operation
   return getConnection()
     .then((connection) => {
@@ -521,6 +532,7 @@ export default {
   logger: logger,
   sql: _sql,
   log: log,
+  logPromise: logPromise,
   handleError: handleError,
   escapeRegex: escapeRegex,
   literalRegExp: literalRegExp,

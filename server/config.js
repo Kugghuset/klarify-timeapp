@@ -47,12 +47,12 @@ export default {
         : true,
       requestTimeout: !_.isUndefined(process.env.DB_REQUEST_TIMEOUT)
         ? process.env.DB_REQUEST_TIMEOUT
-        : 60000,
+        : 600000,
     },
     pool: {
       max: 10,
       min: 4,
-      idleTimeoutMillis: 60000
+      idleTimeoutMillis: 600000
     }
   },
   timeApp: {

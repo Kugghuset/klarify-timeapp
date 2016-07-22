@@ -54,11 +54,11 @@ const getParams = (timeAppReport = {}) => {
       val: timeAppReport.quantity,
     },
     price: {
-      type: sql.Int,
+      type: sql.Float,
       val: timeAppReport.price,
     },
     sum: {
-      type: sql.Int,
+      type: sql.Float,
       val: timeAppReport.sum,
     },
     employeeId: {
@@ -215,6 +215,7 @@ export function mergeMany(timeAppReports) {
         query: sql.fromFile('./sql/timeAppReport.mergeTemp.sql')
           .replace(/\{table_name\}/ig, _tableName)
     }))
+    .then(data => utils.logPromise(data, 'Merged timeAppReports', 'info', { tableName: _tableName }))
     .then(resolve)
     .catch(reject);
   });

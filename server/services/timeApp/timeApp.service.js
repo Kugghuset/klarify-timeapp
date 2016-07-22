@@ -321,16 +321,18 @@ export function insertData(context) {
   return TimeAppEmployee.mergeMany(_timeAppEmployees)
   // Fetch the matching records
   .then(() => TimeAppEmployee.findByNames(_timeAppEmployees))
+  // Merge timeAppEmployees into _timeAppReports
   .then(timeAppEmployees => Promise.resolve(employeesIntoReports(timeAppEmployees, _timeAppReports)))
+  // Merge the new timeAppReports into the TimeAppReport table
   .then(TimeAppReport.mergeMany)
   // .then(Promise.resolve);
 }
 
 login(config.timeApp.email, config.timeApp.password)
-.then(context => generateReport(_.assign({}, context, { dateFrom: moment().startOf('year').toDate(), dateTo: moment().endOf('year').toDate() })))
+.then(context => generateReport(_.assign({}, context, { dateFrom: moment().startOf('year').subtract(3, 'years').toDate(), dateTo: moment().endOf('year').toDate() })))
 .then(insertData)
 .then(data => utils.print(data, 5))
-.catch(err => utils.print(err));
+.catch(err => utils.print(err, 5));
 
 export default {
   baseUrl: baseUrl,
