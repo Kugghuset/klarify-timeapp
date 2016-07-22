@@ -42,6 +42,7 @@ FROM (
       , [employeeId]
     FROM [dbo].[{table_name}]
   ) AS [Source]
+
   /**
    * Really sketchy matching and won't work on bigger datasets
    * or for bigger companies.

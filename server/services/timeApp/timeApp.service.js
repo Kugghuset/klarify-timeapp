@@ -10,6 +10,7 @@ import config from './../../config';
 import utils from '../../utils/utils';
 
 import TimeAppEmployee from './../../api/timeAppEmployee/timeAppEmployee.db';
+import TimeAppReport from './../../api/timeAppReport/timeAppReport.db';
 
 /**
  * TODO:
@@ -18,26 +19,79 @@ import TimeAppEmployee from './../../api/timeAppEmployee/timeAppEmployee.db';
  */
 
 /**
- * Tries to get the first name, last name and full name from *fullName*
- * and returns all as an object
+ * Returns an array of all unique timeAppEmployees
+ * in *rows*
  *
- * @param {String} fullName
- * @return {{ firstName: String, lastName: String, name: String }}
+ * @param {{}[]} rows
+ * @param {String[]}
+ * @return {{ firstName: String, lastName: String, name: String }[]}
  */
-function getNameObject(fullName) {
-  // Get an array of all names
-  const _namesArr = fullName.split(' ');
-
-  // Get all name parts
-  const firstName = _namesArr.shift();
-  const lastName = _namesArr.pop();
-
-  return { firstName, lastName, name: fullName };
+function getUniqueTimeAppEmployees(rows, keys) {
+  return _.chain(rows)
+    // Get only the epmloyees
+    .map(keys[reportKeysEnum.EMPLOYEE])
+    // Get unique entries only
+    .uniq()
+    // Create name objects
+    .map(TimeAppEmployee.nameToEmployee)
+    .value();
 }
+
+/**
+ * @param {{ name: String, firstName: String, lastName: String, employeeId: Number, timeAppEmployeeId: Number }[]} timeAppEmployees
+ * @param {{}[]} rows
+ * @return {{}[]}
+ */
+function employeesIntoReports(timeAppEmployees, reportRow) {
+  return _.chain(reportRow)
+    .map(row => {
+      const _timeAppEmployee = _.find(timeAppEmployees, { name: row.employeeName });
+      return _.assign({}, row, _.pick(_timeAppEmployee, ['timeAppEmployeeId', 'employeeId']));
+    })
+    .value()
+}
+
+/**
+ * @param {Object} row Report row as an object, with the keys given from the report
+ * @param {Number} index The current index of keys, which should match index of *timeAppReportProps*
+ * @param {String} key Key of the current index of keys
+ * @return {Object}
+ */
+function rowProp(row, index, key) {
+  const { type, name } = _.pick(timeAppReportProps[index], ['type', 'name']);
+
+  // If there is no mapping, return as is
+  if (_.isUndefined(name)) {
+    return row;
+  }
+
+  return _.set({}, name, new type(row[key]));
+}
+
+/**
+ * Converts the row from the format from the raw report
+ * into the format of TimeAppReports and returns it.
+ *
+ * @param {Object} row Report row as an object, with the keys given from the report
+ * @param {String[]} keys The keys from the report. Should map quite nicely to the *row* and *reportKeysEnum*
+ * @return {Object}
+ */
+function rowToReport(row, keys) {
+  return _.chain(keys)
+    // Convert the old values into the keys of TimeAppReports
+    .reduce((obj, key, i) => _.assign({}, obj, rowProp(row, i, key)), {})
+    // Also get all other values, which didn't get set
+    .thru(_row => _.assign({}, _row, _.omit(row, keys)))
+    .value();
+}
+
+/****************
+ * Exports below.
+ ****************/
 
 export const baseUrl = 'https://redovisa.timeapp.se';
 
-export const reportKeys = Object.freeze({
+export const reportKeysEnum = Object.freeze({
   TYPE: 0,
   EMPLOYEE: 1,
   DATE: 2,
@@ -49,6 +103,21 @@ export const reportKeys = Object.freeze({
   PRICE: 8,
   SUM: 9,
 });
+
+const timeAppReportProps = Object.freeze([
+  { name: 'type', type: String},
+  { name: 'employeeName', type: String},
+  { name: 'date', type: Date},
+  { name: 'customerName', type: String},
+  { name: 'projectName', type: String},
+  { name: 'comment', type: String},
+  { name: 'code', type: String},
+  { name: 'quantity', type: Number},
+  { name: 'price', type: Number},
+  { name: 'sum', type: Number},
+  { name: 'employeeId', type: Number},
+  { name: 'timeAppEmployeeId', type: Number},
+]);
 
 /**
  * @param {String} email The email of the user to log in
@@ -214,7 +283,7 @@ export function generateReport(context) {
         // Create objects of each row
         .map(values => _.reduce(values, (obj, val, i) => _.assign({}, obj, _.set({}, _keys[i], val)), {}))
         // Sort values by what's presumably the date row
-        .orderBy(_keys[2], 'asc')
+        .orderBy(_keys[reportKeysEnum.DATE], 'asc')
         .value();
 
       utils.log('Successfully receieved report', 'info', _.assign({}, _meta, { rowLength: data.length, keys: _keys }));
@@ -233,40 +302,40 @@ export function generateReport(context) {
   });
 }
 
-export function structureReport(context) {
+/**
+ * Inserts data into the DB
+ *
+ * @param {{ keys: String[], rows: {}[], sessionId: String, dateFrom: Date, dateTo: Date, filter: String }} context
+ * @return {Promise<{}>}
+ */
+export function insertData(context) {
   const {
     rows,
     keys,
   } = context;
 
-  const _employeeNames = _.chain(rows)
-    // Get only the epmloyees
-    .map(keys[reportKeys.EMPLOYEE])
-    // Get unique entries only
-    .uniq()
-    // Create name objects
-    .map(getNameObject)
-    .value();
+  const _timeAppEmployees = getUniqueTimeAppEmployees(rows, keys);
+  const _timeAppReports = _.map(rows, row => rowToReport(row, keys));
 
-  /**
-   * TODO: After merging raw employees into TimeAppEmployee,
-   *       we should do the same with the other rows
-   *       and then merge them into FactKugghuset.
-   */
-
-  return TimeAppEmployee.mergeMany(_employeeNames)
-  .then(Promise.resolve);
+  // Merge the new rows into the TimeAppEmployee table
+  return TimeAppEmployee.mergeMany(_timeAppEmployees)
+  // Fetch the matching records
+  .then(() => TimeAppEmployee.findByNames(_timeAppEmployees))
+  .then(timeAppEmployees => Promise.resolve(employeesIntoReports(timeAppEmployees, _timeAppReports)))
+  .then(TimeAppReport.mergeMany)
+  // .then(Promise.resolve);
 }
 
 login(config.timeApp.email, config.timeApp.password)
-.then(generateReport)
-.then(structureReport)
+.then(context => generateReport(_.assign({}, context, { dateFrom: moment().startOf('year').toDate(), dateTo: moment().endOf('year').toDate() })))
+.then(insertData)
+.then(data => utils.print(data, 5))
 .catch(err => utils.print(err));
 
 export default {
   baseUrl: baseUrl,
-  reportKeys: reportKeys,
+  reportKeysEnum: reportKeysEnum,
   login: login,
   generateReport: generateReport,
-  structureReport: structureReport,
+  structureReport: insertData,
 }

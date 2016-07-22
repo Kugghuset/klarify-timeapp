@@ -25,6 +25,7 @@ export default (app, log) => {
   /// Start inject routes ///
   app.use('/api/users', require('./api/user').default);
   app.use('/api/time-app-employees', require('./api/timeAppEmployee').default);
+  app.use('/api/time-app-reports', require('./api/timeAppReport').default);
   /// Stop inject routes ///
 
   /// Start inject services ///

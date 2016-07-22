@@ -178,17 +178,50 @@ export function mergeMany(timeAppEmployees) {
   return new Promise((resolve, reject) => {
     const _tableName = `TimeAppEmployee_${utils.guid().slice(0, 10)}`;
 
-    utils.createManySQL(timeAppEmployees, _tableName, __dirname, 'timeAppEmployee', undefined, undefined, true)
-    .then(employees => {
-
-      return sql.execute({
+    utils.createManySQL(timeAppEmployees, _tableName, __dirname, 'timeAppEmployee', undefined, undefined, false)
+    .then(rowCount => sql.execute({
         query: sql.fromFile('./sql/timeAppEmployee.mergeTemp.sql')
-          .replace(/\{table_name\}/ig, _tableName),
-      });
-    })
+          .replace(/\{table_name\}/ig, _tableName)
+    }))
     .then(resolve)
     .catch(reject);
   });
+}
+
+/**
+ * @param {{ name: String, firstName: String, lastName: String }[]} timeAppEmployees
+ * @return {Promise<{ name: String, firstName: String, lastName: String, employeeId: Number, timeAppEmployeeId: Number }[]>}
+ */
+export function findByNames(timeAppEmployees) {
+  return new Promise((resolve, reject) => {
+    const _tableName = `TimeAppEmployee_${utils.guid().slice(0, 10)}`;
+
+    utils.createManySQL(timeAppEmployees, _tableName, __dirname, 'timeAppEmployee', undefined, undefined, false)
+    .then(rowCount => sql.execute({
+        query: sql.fromFile('./sql/timeAppEmployee.findFromTempTable.sql')
+          .replace(/\{table_name\}/ig, _tableName)
+    }))
+    .then(resolve)
+    .catch(reject);
+  });
+}
+
+/**
+ * Tries to get the first name, last name and full name from *fullName*
+ * and returns all as an object
+ *
+ * @param {String} fullName
+ * @return {{ firstName: String, lastName: String, name: String }}
+ */
+export function nameToEmployee(fullName) {
+  // Get an array of all names
+  const _namesArr = fullName.split(' ');
+
+  // Get all name parts
+  const firstName = _namesArr.shift();
+  const lastName = _namesArr.pop();
+
+  return { firstName, lastName, name: fullName };
 }
 
 export default {
@@ -199,4 +232,6 @@ export default {
   update: update,
   remove: remove,
   mergeMany: mergeMany,
+  findByNames: findByNames,
+  nameToEmployee: nameToEmployee,
 }

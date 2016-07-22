@@ -442,9 +442,84 @@ export const print = (message, verticalPadding = 0, asIs = false) => {
   if (!!verticalPadding) { console.log(_.times(verticalPadding, () => '\n').join('')); }
 }
 
+/**
+ * @param {Array} coll Collection to check *match* against
+ * @param {Any|Any[]} match Item or items to look for in *coll*
+ * @return {Boolean}
+ */
+export function contains(coll, match) {
+  const _match = _.isArray(match)
+    ? match
+    : [match];
+
+  // It's nothing and thus cannot contain anything
+  return !!~_.indexOf(coll, match);
+}
+
+/**
+ * Replaces the item at *index* in *coll*.
+ *
+ * @param {ArrayLike} coll Collection to replace item in
+ * @param {Number|String} index Index to replace at. Could also
+ * @param {Any} value Value to use instead
+ */
+export function replace(coll, index, value) {
+  // Get a clone of the collection
+  let _coll = _.clone(coll);
+  // Set the item at *index* to value.
+  _coll[index] = value;
+
+  // Return the new item
+  return _coll;
+}
+
+/**
+ * Recursively calls all *promises* in sequence
+ * and resolve when all promises are finished.
+ *
+ * Takes both pure promises and functions returning promises.
+ *
+ * NOTE: If the array contains functions, these mustn't require parameters,
+ * as *sequence* won't pass in any at the moment.
+ *
+ * @param {Array} promises Array of promises to perform
+ * @param {Array} output The output array, do not set!
+ * @return {Promise} -> {Array}
+ */
+function sequence(promises, output) {
+    // Make sure output is defined
+    if (_.isUndefined(output)) { output = []; }
+
+    // Make sure promises is difined
+    if (_.isUndefined(promises)) { promises = []; }
+
+    // When finished
+    if (promises.length === output.length) {
+        return new Promise(function (resolve, reject) {
+            resolve(output);
+        });
+    }
+
+    // Allow both promises and functions returning promises be used.
+    var _promise = _.isFunction(promises[output.length])
+        ? promises[output.length]()
+        : promises[output.length];
+
+    // Call the promise and then return recursively
+    return _promise.then(function (result) {
+        // Recursion
+        return sequence(promises, output.concat([result]));
+    })
+    ['catch'](function (err) {
+        // Recursion
+        return sequence(promises, output.concat([err]));
+    });
+}
+
 export default {
   http: http,
   logger: logger,
+  sql: _sql,
   log: log,
   handleError: handleError,
   escapeRegex: escapeRegex,
@@ -460,5 +535,7 @@ export default {
   headBy: headBy,
   getCookie: getCookie,
   print: print,
-  sql: _sql,
+  contains: contains,
+  replace: replace,
+  sequence: sequence,
 }
