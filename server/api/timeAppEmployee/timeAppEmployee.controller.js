@@ -5,7 +5,7 @@ import config from '../../config';
 import utils from '../../utils/utils';
 
 // Initialize the timeAppEmployee table
-// TimeAppEmployee.initialize();
+TimeAppEmployee.initialize();
 
 /**
  * Route: GET '/api/timeAppEmployees/'

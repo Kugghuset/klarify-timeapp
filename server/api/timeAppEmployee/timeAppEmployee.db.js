@@ -178,18 +178,13 @@ export function mergeMany(timeAppEmployees) {
   return new Promise((resolve, reject) => {
     const _tableName = `TimeAppEmployee_${utils.guid().slice(0, 10)}`;
 
-    utils.print(_tableName, 5);
-
     utils.createManySQL(timeAppEmployees, _tableName, __dirname, 'timeAppEmployee', undefined, undefined, true)
     .then(employees => {
 
-      utils.print(employees, 10);
-
-      /**
-       * TODO: Merge data into TimeAppEmployee table!
-       */
-
-      return utils.dropTable(_tableName);
+      return sql.execute({
+        query: sql.fromFile('./sql/timeAppEmployee.mergeTemp.sql')
+          .replace(/\{table_name\}/ig, _tableName),
+      });
     })
     .then(resolve)
     .catch(reject);

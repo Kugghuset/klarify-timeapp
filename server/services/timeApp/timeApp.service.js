@@ -258,10 +258,10 @@ export function structureReport(context) {
   .then(Promise.resolve);
 }
 
-// login(config.timeApp.email, config.timeApp.password)
-// .then(generateReport)
-// .then(structureReport)
-// .catch(err => utils.print(err));
+login(config.timeApp.email, config.timeApp.password)
+.then(generateReport)
+.then(structureReport)
+.catch(err => utils.print(err));
 
 export default {
   baseUrl: baseUrl,

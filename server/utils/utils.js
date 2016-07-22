@@ -259,30 +259,31 @@ export const parseSQLCreateTable = (fileContents, skipNames = [], skipIdentity =
  */
 export const dropTable = (tableName, database) => new Promise ((resolve, reject) => {
   // Ensure there are wrapping square brackets
-  let _tableName = /^\[.*\]$/.test(tableName)
+  const _tableName = /^\[.*\]$/.test(tableName)
     ? `[dbo].${tableName}`
     : `[dbo].[${tableName}]`;
 
   // If there's a database, make sure it's in square brackets
-  let _database = (!!database && /^\[.*\]$/.test(database))
+  const _database = (!!database && /^\[.*\]$/.test(database))
     ? database
     : `[${database}]`;
 
   // Use either the default database or *database*
-  let _tablePath = !!database
+  const _tablePath = !!database
     ? `${_database}.${_tableName}`
     : _tableName;
 
   // Create the query
-  let _query = `DROP TABLE ${_tablePath}`;
-
-  console.log(`Dropping table ${_tablePath}`);
+  const _query = `DROP TABLE ${_tablePath}`;
 
   // Drop the table!
   seriate.execute({
     query: _query
   })
-  .then((data) => resolve(data))
+  .then((data) => {
+    log(`Table ${_tablePath} dropped.`, 'info');
+    resolve(data)
+  })
   .catch(reject);
 });
 
