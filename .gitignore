@@ -5,3 +5,4 @@ typings
 .vscode
 **/bundle.js
 .server/**
+**/.bulk_size.js

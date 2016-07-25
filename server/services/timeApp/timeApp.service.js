@@ -105,18 +105,18 @@ export const reportKeysEnum = Object.freeze({
 });
 
 const timeAppReportProps = Object.freeze([
-  { name: 'type', type: String},
-  { name: 'employeeName', type: String},
-  { name: 'date', type: Date},
-  { name: 'customerName', type: String},
-  { name: 'projectName', type: String},
-  { name: 'comment', type: String},
-  { name: 'code', type: String},
-  { name: 'quantity', type: Number},
-  { name: 'price', type: Number},
-  { name: 'sum', type: Number},
-  { name: 'employeeId', type: Number},
-  { name: 'timeAppEmployeeId', type: Number},
+  { name: 'type', type: String },
+  { name: 'employeeName', type: String },
+  { name: 'date', type: Date },
+  { name: 'customerName', type: String },
+  { name: 'projectName', type: String },
+  { name: 'comment', type: String },
+  { name: 'code', type: String },
+  { name: 'quantity', type: Number },
+  { name: 'price', type: Number },
+  { name: 'sum', type: Number },
+  { name: 'employeeId', type: Number },
+  { name: 'timeAppEmployeeId', type: Number },
 ]);
 
 /**
@@ -319,20 +319,20 @@ export function insertData(context) {
 
   // Merge the new rows into the TimeAppEmployee table
   return TimeAppEmployee.mergeMany(_timeAppEmployees)
-  // Fetch the matching records
-  .then(() => TimeAppEmployee.findByNames(_timeAppEmployees))
-  // Merge timeAppEmployees into _timeAppReports
-  .then(timeAppEmployees => Promise.resolve(employeesIntoReports(timeAppEmployees, _timeAppReports)))
-  // Merge the new timeAppReports into the TimeAppReport table
-  .then(TimeAppReport.mergeMany)
+    // Fetch the matching records
+    .then(() => TimeAppEmployee.findByNames(_timeAppEmployees))
+    // Merge timeAppEmployees into _timeAppReports
+    .then(timeAppEmployees => Promise.resolve(employeesIntoReports(timeAppEmployees, _timeAppReports)))
+    // Merge the new timeAppReports into the TimeAppReport table
+    .then(TimeAppReport.mergeMany)
   // .then(Promise.resolve);
 }
 
-login(config.timeApp.email, config.timeApp.password)
-.then(context => generateReport(_.assign({}, context, { dateFrom: moment().startOf('year').subtract(3, 'years').toDate(), dateTo: moment().endOf('year').toDate() })))
-.then(insertData)
-.then(data => utils.print(data, 5))
-.catch(err => utils.print(err, 5));
+// login(config.timeApp.email, config.timeApp.password)
+// .then(context => generateReport(_.assign({}, context, { dateFrom: moment().startOf('year').subtract(3, 'years').toDate(), dateTo: moment().endOf('year').toDate() })))
+// .then(insertData)
+// .then(data => utils.print(data, 5))
+// .catch(err => utils.print(err, 5));
 
 export default {
   baseUrl: baseUrl,
