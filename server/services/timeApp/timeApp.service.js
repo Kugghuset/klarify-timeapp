@@ -325,6 +325,8 @@ export function insertData(context) {
     .then(timeAppEmployees => Promise.resolve(employeesIntoReports(timeAppEmployees, _timeAppReports)))
     // Merge the new timeAppReports into the TimeAppReport table
     .then(TimeAppReport.mergeMany)
+    // Merge updated timeReports into actual live table
+    .then(TimeAppReport.mergeToMaster)
   // .then(Promise.resolve);
 }
 

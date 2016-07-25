@@ -221,6 +221,19 @@ export function mergeMany(timeAppReports) {
   });
 }
 
+/**
+ * @return {Promise<{}>}
+ */
+export function mergeToMaster() {
+  return new Promise((resolve, reject) => {
+    sql.execute({
+      query: sql.fromFile('./sql/timeAppReport.mergeToMaster.sql')
+    })
+    .then(resolve)
+    .catch(reject);
+  });
+}
+
 export default {
   initialize: initialize,
   find: find,
@@ -230,4 +243,5 @@ export default {
   remove: remove,
   createMany: createMany,
   mergeMany: mergeMany,
+  mergeToMaster: mergeToMaster,
 }
