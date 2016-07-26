@@ -309,6 +309,8 @@ export function generateReport(context) {
  * @return {Promise<{}>}
  */
 export function insertData(context) {
+  utils.log('Started inserting data', 'info');
+
   const {
     rows,
     keys,
@@ -327,14 +329,23 @@ export function insertData(context) {
     .then(TimeAppReport.mergeMany)
     // Merge updated timeReports into actual live table
     .then(TimeAppReport.mergeToMaster)
-  // .then(Promise.resolve);
+    .then(data => utils.logPromise(data, 'Completed inserting data.'))
+    .catch(err => {
+      utils.log('Failed to insert data', 'info')
+      utils.log(err, 'error');
+      return Promise.reject(err);
+    })
 }
 
-// login(config.timeApp.email, config.timeApp.password)
-// .then(context => generateReport(_.assign({}, context, { dateFrom: moment().startOf('year').subtract(3, 'years').toDate(), dateTo: moment().endOf('year').toDate() })))
-// .then(insertData)
-// .then(data => utils.print(data, 5))
-// .catch(err => utils.print(err, 5));
+const _dates = {
+  dateFrom: moment().startOf('year').subtract(3, 'years').toDate(),
+  dateTo: moment().endOf('year').toDate(),
+};
+
+login(config.timeApp.email, config.timeApp.password)
+.then(context => generateReport(_.assign({}, context, _dates)))
+.then(insertData)
+.catch(err => utils.log(err, 'error'));
 
 export default {
   baseUrl: baseUrl,

@@ -23,7 +23,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 import routes from './routes';
 routes(app, utils.logger);
 
-sql.on('failed', (err) => {
+sql.on('error', (err) => {
   utils.log(`The following error occured in Seriate:\n${JSON.stringify(err)}`);
 });
 

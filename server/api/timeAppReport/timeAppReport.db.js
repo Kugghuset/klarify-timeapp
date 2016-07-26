@@ -206,11 +206,28 @@ export const remove = (timeAppReportId) => new Promise((resolve, reject) => {
  */
 export const createMany = (timeAppReports) => utils.createManySQL(timeAppReports, 'TimeAppReport', __dirname, 'timeAppReport');
 
+/**
+ * Merges in *many* *timeAppReports* into the TimeAppReport table.
+ *
+ * @param {{}[]} timeAppReports
+ * @return {Promise<{}[]>}
+ */
 export function mergeMany(timeAppReports) {
   return new Promise((resolve, reject) => {
     const _tableName = `TimeAppReport_${utils.guid().slice(0, 10)}`;
 
-    utils.createManySQL(timeAppReports, _tableName, __dirname, 'timeAppReport', undefined, undefined, false)
+    const opts = {
+      collection: timeAppReports,
+      tableName: _tableName,
+      dirname: __dirname,
+      baseName: 'timeAppReport',
+      mainId: undefined,
+      skipNames: undefined,
+      returnValues: false,
+      batchSize: 1000,
+    };
+
+    utils.createManySQLOpts(opts)
     .then(rowCount => sql.execute({
         query: sql.fromFile('./sql/timeAppReport.mergeTemp.sql')
           .replace(/\{table_name\}/ig, _tableName)
@@ -222,14 +239,18 @@ export function mergeMany(timeAppReports) {
 }
 
 /**
+ * Merges all rows with isUpdated = 1 in TimeAppReport table into the master table.
+ *
  * @return {Promise<{}>}
  */
 export function mergeToMaster() {
   return new Promise((resolve, reject) => {
+    utils.log(`Merging TimeAppReports into Fact table`, 'info');
+
     sql.execute({
       query: sql.fromFile('./sql/timeAppReport.mergeToMaster.sql')
     })
-    .then(resolve)
+    .then(data => utils.logPromise(data, `Completed merging TimeAppReportS into Fact table`, 'info'))
     .catch(reject);
   });
 }

@@ -2,6 +2,7 @@
 
 import _ from 'lodash';
 import DataObjectParser from 'dataobject-parser';
+import Promise from 'bluebird';
 import seriate from 'seriate';
 import mssql from 'mssql';
 import path from 'path';
@@ -410,6 +411,36 @@ export const createManySQL = (collection, tableName, dirname, baseName, mainId, 
 });
 
 /**
+ * @param {{ collection: {}[], tableName: String, dirname: String, baseName: String, mainId: String, skipNames: String[], returnValues: Boolean, batchSize: Number }} context
+ * @return {Promise<{}[]>}
+ */
+export function createManySQLOpts(context = {}) {
+  const {
+    collection,
+    tableName,
+    dirname,
+    baseName,
+    mainId,
+    skipNames,
+    returnValues,
+    batchSize,
+  } = context;
+
+  // Get the promises
+  const _imports = !batchSize
+    ? [ (() => createManySQL(collection, tableName, dirname, baseName, mainId, skipNames, false)) ]
+    : _.chain(collection)
+        .chunk(batchSize)
+        .map(coll => (() => createManySQL(coll, tableName, dirname, baseName, mainId, skipNames, false)))
+        .value();
+
+  return sequence(_imports)
+  .then(data => seriate.execute({ query: `SELECT * FROM ${tableName}` }))
+  .then(Promise.resolve)
+  .catch(Promise.reject);
+}
+
+/**
  * Returns the first *propName* from *collection*.
  *
  * @param {ArrayLike} collection The collection to get from
@@ -495,7 +526,7 @@ export function replace(coll, index, value) {
  *
  * @param {Array} promises Array of promises to perform
  * @param {Array} output The output array, do not set!
- * @return {Promise} -> {Array}
+ * @return {Promise<{}[]>}
  */
 function sequence(promises, output) {
     // Make sure output is defined
@@ -506,9 +537,7 @@ function sequence(promises, output) {
 
     // When finished
     if (promises.length === output.length) {
-        return new Promise(function (resolve, reject) {
-            resolve(output);
-        });
+        return Promise.resolve(output);
     }
 
     // Allow both promises and functions returning promises be used.
@@ -544,6 +573,7 @@ export default {
   parseSQLCreateTable: parseSQLCreateTable,
   dropTable: dropTable,
   createManySQL: createManySQL,
+  createManySQLOpts: createManySQLOpts,
   headBy: headBy,
   getCookie: getCookie,
   print: print,
