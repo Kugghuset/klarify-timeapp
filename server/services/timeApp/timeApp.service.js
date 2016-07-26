@@ -280,6 +280,18 @@ export function generateReport(context) {
         .map(line => line.split('\t'))
         // Filter out any empty rows
         .filter(_.some)
+        /**
+         * Fix column splits for rows with comments with tabs in them.
+         *
+         * If cols.length matches that of _keys then return cols as is.
+         * If it doesn't match, get the first 5 columns and the last 4 as is,
+         * and have join all columns between those into a single column.
+         */
+        .map(cols => (
+          cols.length === _keys.length
+            ? cols
+            : cols.slice(0, 5).concat([ cols.slice(5, -4).join('') ]).concat(cols.slice(-4))
+        ))
         // Create objects of each row
         .map(values => _.reduce(values, (obj, val, i) => _.assign({}, obj, _.set({}, _keys[i], val)), {}))
         // Sort values by what's presumably the date row
@@ -339,6 +351,7 @@ export function insertData(context) {
 
 const _dates = {
   dateFrom: moment().startOf('year').subtract(3, 'years').toDate(),
+  // dateFrom: moment().startOf('month').toDate(),
   dateTo: moment().endOf('year').toDate(),
 };
 

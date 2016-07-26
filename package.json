@@ -17,7 +17,7 @@
     "milligram": "1.1.0",
     "moment": "2.14.1",
     "morgan": "1.7.0",
-    "mssql": "^3.3.0",
+    "mssql": "3.3.0",
     "node-env-file": "0.1.8",
     "normalize.css": "4.2.0",
     "seriate": "0.7.1",
