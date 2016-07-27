@@ -353,12 +353,15 @@ const _dates = {
   dateFrom: moment().startOf('year').subtract(3, 'years').toDate(),
   // dateFrom: moment().startOf('month').toDate(),
   dateTo: moment().endOf('year').toDate(),
+  // dateFrom: moment(new Date('2014')).toDate(),
+  // dateTo: moment(new Date('2014')).endOf('year').toDate(),
 };
 
-login(config.timeApp.email, config.timeApp.password)
-.then(context => generateReport(_.assign({}, context, _dates)))
-.then(insertData)
-.catch(err => utils.log(err, 'error'));
+// login(config.timeApp.email, config.timeApp.password)
+// .then(context => generateReport(_.assign({}, context, _dates)))
+// .then(insertData)
+// .catch(err => utils.log(err, 'error'));
+
 
 export default {
   baseUrl: baseUrl,

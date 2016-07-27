@@ -10,7 +10,7 @@ SET
   , [projectName] = @projectName
   , [code] = @code
   , [employeeName] = @employeeName
-  , [timeAppEmployeeId] = @timeAppEmployeeId
+  , [employeeId] = @employeeId
   , [categoryId] = @categoryId
   , [dateUpdated] = GETUTCDATE()
 WHERE [timeAppCategoryId] = @timeAppCategoryId
@@ -23,7 +23,7 @@ SELECT
   , [projectName]
   , [code]
   , [employeeName]
-  , [timeAppEmployeeId]
+  , [employeeId]
   , [categoryId]
   , [dateCreated]
   , [dateUpdated]

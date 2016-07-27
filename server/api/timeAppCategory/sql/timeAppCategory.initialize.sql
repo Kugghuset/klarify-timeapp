@@ -11,7 +11,7 @@ BEGIN
     , [projectName] VarChar(255) NULL
     , [code] VarChar(255) NULL -- Might be used later
     , [employeeName] VarChar(512) NULL -- Mainly for debugging reasons
-    , [timeAppEmployeeId] BigInt NULL
+    , [employeeId] BigInt NULL
     , [categoryId] BigInt NULL -- Reference to [dbo].[DimCategory]
     , [dateCreated] DateTime2 DEFAULT GETUTCDATE() NULL
     , [dateUpdated] DateTime2 DEFAULT GETUTCDATE() NULL

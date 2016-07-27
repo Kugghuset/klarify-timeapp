@@ -9,7 +9,7 @@ SELECT
   , [projectName]
   , [code]
   , [employeeName]
-  , [timeAppEmployeeId]
+  , [employeeId]
   , [categoryId]
   , [dateCreated]
   , [dateUpdated]

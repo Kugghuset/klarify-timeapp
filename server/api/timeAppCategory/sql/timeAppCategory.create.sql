@@ -11,7 +11,7 @@ INSERT INTO [dbo].[TimeAppCategory] (
   , [projectName]
   , [code]
   , [employeeName]
-  , [timeAppEmployeeId]
+  , [employeeId]
   , [categoryId]
 )
 VALUES (
@@ -20,7 +20,7 @@ VALUES (
   , @projectName
   , @code
   , @employeeName
-  , @timeAppEmployeeId
+  , @employeeId
   , @categoryId
 )
 
@@ -34,7 +34,7 @@ SELECT
   , [projectName]
   , [code]
   , [employeeName]
-  , [timeAppEmployeeId]
+  , [employeeId]
   , [categoryId]
   , [dateCreated]
   , [dateUpdated]

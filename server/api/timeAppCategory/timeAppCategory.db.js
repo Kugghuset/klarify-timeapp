@@ -41,9 +41,9 @@ const getParams = (timeAppCategory = {}) => {
       type: sql.VarChar(512),
       val: timeAppCategory.employeeName,
     },
-    timeAppEmployeeId: {
+    employeeId: {
       type: sql.BigInt,
-      val: timeAppCategory.timeAppEmployeeId,
+      val: timeAppCategory.employeeId,
     },
     categoryId: {
       type: sql.BigInt,
