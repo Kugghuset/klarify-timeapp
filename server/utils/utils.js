@@ -377,12 +377,6 @@ export const createManySQL = (collection, tableName, dirname, baseName, mainId, 
 
   let _request;
 
-  /**
-   * TODO: Allow for batch size to be set.
-   *       Apparently Azure doesn't like it when we inserts
-   *       too many rows at once.
-   */
-
   // Create a request instace and make the bulk operation
   return getConnection()
     .then((connection) => {
@@ -425,6 +419,10 @@ export function createManySQLOpts(context = {}) {
     returnValues,
     batchSize,
   } = context;
+
+  if (!collection || !collection.length) {
+    return Promise.resolve([]);
+  }
 
   // Get the promises
   const _imports = !batchSize

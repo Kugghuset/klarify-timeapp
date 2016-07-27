@@ -6,82 +6,89 @@ SET XACT_ABORT ON
 
 BEGIN TRAN
 
-/**
- * Try to update the table first,
- * setting the employeeId if found.
- */
-UPDATE [dbo].[{table_name}]
-SET [employeeId] = (
-  SELECT TOP 1 [EmployeeId]
-  FROM [dbo].[DimEmployee]
-  WHERE [Employee] = [firstName]
-)
-WHERE [employeeId] IS NULL
-
-/**
- * Perform the merge.
- */
-INSERT INTO [dbo].[TimeAppEmployee] (
-    [firstName]
-  , [lastName]
-  , [name]
-  , [employeeId]
-)
-SELECT
-    [firstName]
-  , [lastName]
-  , [name]
-  , [employeeId]
-FROM (
-  MERGE [dbo].[TimeAppEmployee] AS [Target]
-  USING (
-    SELECT
-        [firstName]
-      , [lastName]
-      , [name]
-      , [employeeId]
-    FROM [dbo].[{table_name}]
-  ) AS [Source]
+IF (OBJECT_ID('{table_name}', 'U') IS NOT NULL)
+BEGIN
+  /**
+  * Try to update the table first,
+  * setting the employeeId if found.
+  *
+  * Note: Duplicates may be created when multiple new rows are inserted,
+  *       but if the an ID already exists in [dbo].[TimeAppEmployee] do nothing.
+  */
+  UPDATE [dbo].[{table_name}]
+  SET [employeeId] = (
+    SELECT TOP 1 [EmployeeId]
+    FROM [dbo].[DimEmployee]
+    WHERE [Employee] = [firstName]
+      AND [EmployeeId] NOT IN (SELECT [employeeId] FROM [dbo].[TimeAppEmployee])
+  )
+  WHERE [employeeId] IS NULL
 
   /**
-   * Really sketchy matching and won't work on bigger datasets
-   * or for bigger companies.
-   */
-  ON [Target].[name] = [Source].[name]
+  * Perform the merge.
+  */
+  INSERT INTO [dbo].[TimeAppEmployee] (
+      [firstName]
+    , [lastName]
+    , [name]
+    , [employeeId]
+  )
+  SELECT
+      [firstName]
+    , [lastName]
+    , [name]
+    , [employeeId]
+  FROM (
+    MERGE [dbo].[TimeAppEmployee] AS [Target]
+    USING (
+      SELECT
+          [firstName]
+        , [lastName]
+        , [name]
+        , [employeeId]
+      FROM [dbo].[{table_name}]
+    ) AS [Source]
 
-  WHEN MATCHED AND (
-       [Target].[firstName] != [Source].[firstName]
-    OR [Target].[lastName] != [Source].[lastName]
-    OR (
-          [Source].[employeeId] IS NOT NULL
-      AND (
-            [Target].[employeeId] != [Source].[employeeId]
-         OR [Target].[employeeId] IS NULL
+    /**
+    * Really sketchy matching and won't work on bigger datasets
+    * or for bigger companies.
+    */
+    ON [Target].[name] = [Source].[name]
+
+    WHEN MATCHED AND (
+        [Target].[firstName] != [Source].[firstName]
+      OR [Target].[lastName] != [Source].[lastName]
+      OR (
+            [Source].[employeeId] IS NOT NULL
+        AND (
+              [Target].[employeeId] != [Source].[employeeId]
+          OR [Target].[employeeId] IS NULL
+        )
       )
-    )
-  ) THEN UPDATE SET
-      [Target].[firstName] = [Source].[firstName]
-    , [Target].[lastName] = [Source].[lastName]
-    , [Target].[name] = [Source].[name]
-    , [Target].[employeeId] = [Source].[employeeId]
-    , [Target].[dateUpdated] = GETUTCDATE()
+    ) THEN UPDATE SET
+        [Target].[firstName] = [Source].[firstName]
+      , [Target].[lastName] = [Source].[lastName]
+      , [Target].[name] = [Source].[name]
+      , [Target].[employeeId] = [Source].[employeeId]
+      , [Target].[dateUpdated] = GETUTCDATE()
 
-  WHEN NOT MATCHED BY TARGET
-    THEN INSERT (
-        [firstName]
-      , [lastName]
-      , [name]
-      , [employeeId]
-    ) VALUES (
-        [Source].[firstName]
-      , [Source].[lastName]
-      , [Source].[name]
-      , [Source].[employeeId]
-    )
-  OUTPUT $action AS [Action], [Source].*
-) AS [MergeOutput]
-  WHERE [MergeOutput].[Action] = NULL
+    WHEN NOT MATCHED BY TARGET
+      THEN INSERT (
+          [firstName]
+        , [lastName]
+        , [name]
+        , [employeeId]
+      ) VALUES (
+          [Source].[firstName]
+        , [Source].[lastName]
+        , [Source].[name]
+        , [Source].[employeeId]
+      )
+    OUTPUT $action AS [Action], [Source].*
+  ) AS [MergeOutput]
+    WHERE [MergeOutput].[Action] = NULL
 
-DROP TABLE [dbo].[{table_name}]
+  DROP TABLE [dbo].[{table_name}]
+END
 
 COMMIT TRAN
