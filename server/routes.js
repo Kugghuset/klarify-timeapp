@@ -28,6 +28,8 @@ export default (app, log) => {
   app.use('/api/time-app-reports', require('./api/timeAppReport').default);
   app.use('/api/time-app-discounts', require('./api/timeAppDiscount').default);
   app.use('/api/time-app-categories', require('./api/timeAppCategory').default);
+  app.use('/api/time-app-category-scores', require('./api/timeAppCategoryScore').default);
+  app.use('/api/time-app-category-results', require('./api/timeAppCategoryResult').default);
   /// Stop inject routes ///
 
   /// Start inject services ///
