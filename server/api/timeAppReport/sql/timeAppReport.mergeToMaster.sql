@@ -192,7 +192,7 @@ BEGIN
 
   WHEN MATCHED
     AND (
-        ([Target].[Comment] IS NULL OR [Target].[Comment] != [Source].[Customer])
+        ([Target].[Comment] IS NULL OR [Target].[Comment] != [Source].[Comment])
       OR [Target].[Code] != [Source].[Code]
       OR [Target].[Hourly Price] != [Source].[Hourly Price]
       OR [Target].[TimeAppReportId] IS NULL
