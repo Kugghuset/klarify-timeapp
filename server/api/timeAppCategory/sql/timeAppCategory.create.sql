@@ -6,22 +6,18 @@ DECLARE @id BigInt
 
 -- Insert the timeAppCategory
 INSERT INTO [dbo].[TimeAppCategory] (
-    [description]
-  , [customerName]
-  , [projectName]
-  , [code]
-  , [employeeName]
-  , [employeeId]
-  , [categoryId]
+    [categoryId]
+  , [isGiven]
+  , [totalValue]
+  , [timeAppReportId]
+  , [timeAppCategoryBlobId]
 )
 VALUES (
-    @description
-  , @customerName
-  , @projectName
-  , @code
-  , @employeeName
-  , @employeeId
-  , @categoryId
+    @categoryId
+  , @isGiven
+  , @totalValue
+  , @timeAppReportId
+  , @timeAppCategoryBlobId
 )
 
 SELECT @id = SCOPE_IDENTITY()
@@ -29,13 +25,11 @@ SELECT @id = SCOPE_IDENTITY()
 -- Select it
 SELECT
     [timeAppCategoryId]
-  , [description]
-  , [customerName]
-  , [projectName]
-  , [code]
-  , [employeeName]
-  , [employeeId]
   , [categoryId]
+  , [isGiven]
+  , [totalValue]
+  , [timeAppReportId]
+  , [timeAppCategoryBlobId]
   , [dateCreated]
   , [dateUpdated]
   , [isDisabled]

@@ -1,5 +1,5 @@
 /*
-Finds the timeAppReport at @timeAppReportId
+Finds all timeAppReports where [isUpdated] = 1
 */
 
 SELECT
@@ -22,5 +22,6 @@ SELECT
   , [dateUpdated]
   , [isDisabled]
 FROM [dbo].[TimeAppReport]
-WHERE [timeAppReportId] = @timeAppReportId
+WHERE [type] = 'Redovisning'
+  AND [isUpdated] = 1
   AND [isDisabled] = 0

@@ -20,6 +20,7 @@ BEGIN
     , [price]
     , [sum]
     , [employeeId]
+    , [categoryId]
     , [timeAppEmployeeId]
   )
   SELECT
@@ -34,6 +35,7 @@ BEGIN
     , [price]
     , [sum]
     , [employeeId]
+    , [categoryId]
     , [timeAppEmployeeId]
   FROM (
     MERGE [dbo].[TimeAppReport] AS [Target]
@@ -50,6 +52,7 @@ BEGIN
         , [price]
         , [sum]
         , [employeeId]
+        , [categoryId]
         , [timeAppEmployeeId]
       FROM [dbo].[{table_name}]
     ) AS [Source]
@@ -81,6 +84,7 @@ BEGIN
         , [price]
         , [sum]
         , [employeeId]
+        , [categoryId]
         , [timeAppEmployeeId]
       ) VALUES (
           [Source].[type]
@@ -94,6 +98,7 @@ BEGIN
         , [Source].[price]
         , [Source].[sum]
         , [Source].[employeeId]
+        , [Source].[categoryId]
         , [Source].[timeAppEmployeeId]
       )
     OUTPUT $action AS [Action], [Source].*

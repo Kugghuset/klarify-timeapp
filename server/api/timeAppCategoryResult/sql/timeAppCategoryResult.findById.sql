@@ -4,12 +4,14 @@ Finds the timeAppCategoryResult at @timeAppCategoryResultId
 
 SELECT
     [timeAppCategoryResultId]
+  , [isMatch]
   , [timeAppCategoryId]
   , [timeAppCategoryScoreId]
   , [timeAppReportId]
   , [colName]
   , [value]
   , [categoryId]
+  , [timeAppCategoryBlobId]
   , [dateCreated]
   , [dateUpdated]
   , [isDisabled]

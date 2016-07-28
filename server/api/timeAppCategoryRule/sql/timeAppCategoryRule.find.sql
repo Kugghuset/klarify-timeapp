@@ -4,13 +4,15 @@ Finds all timeAppCategorys non-disabled timeAppCategorys
 
 SELECT
     [timeAppCategoryId]
+  , [description]
+  , [customerName]
+  , [projectName]
+  , [code]
+  , [employeeName]
+  , [employeeId]
   , [categoryId]
-  , [isGiven]
-  , [totalValue]
-  , [timeAppReportId]
-  , [timeAppCategoryBlobId]
   , [dateCreated]
   , [dateUpdated]
   , [isDisabled]
-FROM [dbo].[TimeAppCategory]
+FROM [dbo].[TimeAppCategoryRule]
 WHERE [isDisabled] = 0

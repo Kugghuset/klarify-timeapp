@@ -4,13 +4,11 @@ Finds the timeAppCategory at @timeAppCategoryId
 
 SELECT
     [timeAppCategoryId]
-  , [description]
-  , [customerName]
-  , [projectName]
-  , [code]
-  , [employeeName]
-  , [employeeId]
   , [categoryId]
+  , [isGiven]
+  , [totalValue]
+  , [timeAppReportId]
+  , [timeAppCategoryBlobId]
   , [dateCreated]
   , [dateUpdated]
   , [isDisabled]

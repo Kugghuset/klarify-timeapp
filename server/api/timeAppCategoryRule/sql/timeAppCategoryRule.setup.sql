@@ -16,14 +16,14 @@
     , [EmployeeID]
 )
 
---INSERT INTO [dbo].[TimeAppCategory] (
---      [customerName]
---      ,[projectName]
---      ,[code]
---      ,[employeeName]
---      ,[employeeId]
---      ,[categoryId]
---)
+INSERT INTO [dbo].[TimeAppCategoryRule] (
+     [customerName]
+     ,[projectName]
+     ,[code]
+     ,[employeeName]
+     ,[employeeId]
+     ,[categoryId]
+)
 SELECT
     [C].[Customer]
   , [C].[Project]

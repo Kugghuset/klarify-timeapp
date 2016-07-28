@@ -21,9 +21,37 @@ const getParams = (timeAppCategoryResult = {}) => {
       type: sql.BigInt,
       val: timeAppCategoryResult.timeAppCategoryResultId,
     },
-    description: {
+    isMatch: {
+      type: sql.Bit,
+      val: timeAppCategoryResult.isMatch,
+    },
+    timeAppCategoryId: {
+      type: sql.BigInt,
+      val: timeAppCategoryResult.timeAppCategoryId,
+    },
+    timeAppCategoryScoreId: {
+      type: sql.BigInt,
+      val: timeAppCategoryResult.timeAppCategoryScoreId,
+    },
+    timeAppReportId: {
+      type: sql.BigInt,
+      val: timeAppCategoryResult.timeAppReportId,
+    },
+    colName: {
       type: sql.VarChar(255),
-      val: timeAppCategoryResult.description,
+      val: timeAppCategoryResult.colName,
+    },
+    value: {
+      type: Int,
+      val: timeAppCategoryResult.value,
+    },
+    categoryId: {
+      type: sql.BigInt,
+      val: timeAppCategoryResult.categoryId,
+    },
+    timeAppCategoryBlobId: {
+      type: sql.BigInt,
+      val: timeAppCategoryResult.timeAppCategoryBlobId,
     },
   };
 };

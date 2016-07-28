@@ -8,6 +8,7 @@ import moment from 'moment';
 
 import config from './../../config';
 import utils from '../../utils/utils';
+import category from './../category/category.service';
 
 import TimeAppEmployee from './../../api/timeAppEmployee/timeAppEmployee.db';
 import TimeAppReport from './../../api/timeAppReport/timeAppReport.db';
@@ -339,6 +340,8 @@ export function insertData(context) {
     .then(timeAppEmployees => Promise.resolve(employeesIntoReports(timeAppEmployees, _timeAppReports)))
     // Merge the new timeAppReports into the TimeAppReport table
     .then(TimeAppReport.mergeMany)
+    // Categorize all updated TimeAppReports
+    .then(category.categorizeUpdated)
     // Merge updated timeReports into actual live table
     .then(TimeAppReport.mergeToMaster)
     .then(data => utils.logPromise(data, 'Completed inserting data.'))

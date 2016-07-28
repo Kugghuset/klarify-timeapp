@@ -21,33 +21,21 @@ const getParams = (timeAppCategory = {}) => {
       type: sql.BigInt,
       val: timeAppCategory.timeAppCategoryId,
     },
-    description: {
-      type: sql.VarChar(255),
-      val: timeAppCategory.description,
+    isGiven: {
+      type: sql.Bit,
+      val: timeAppCategory.isGiven,
     },
-    customerName: {
-      type: sql.VarChar(255),
-      val: timeAppCategory.customerName,
+    totalValue: {
+      type: sql.Int,
+      val: timeAppCategory.totalValue,
     },
-    projectName: {
-      type: sql.VarChar(255),
-      val: timeAppCategory.projectName,
-    },
-    code: {
-      type: sql.VarChar(255),
-      val: timeAppCategory.code,
-    },
-    employeeName: {
-      type: sql.VarChar(512),
-      val: timeAppCategory.employeeName,
-    },
-    employeeId: {
+    timeAppReportId: {
       type: sql.BigInt,
-      val: timeAppCategory.employeeId,
+      val: timeAppCategory.timeAppReportId,
     },
-    categoryId: {
+    timeAppCategoryBlobId: {
       type: sql.BigInt,
-      val: timeAppCategory.categoryId,
+      val: timeAppCategory.timeAppCategoryBlobId,
     },
   };
 };
@@ -186,6 +174,19 @@ export const remove = (timeAppCategoryId) => new Promise((resolve, reject) => {
  */
 export const createMany = (timeAppCategorys) => utils.createManySQL(timeAppCategorys, 'TimeAppCategory', __dirname, 'timeAppCategory');
 
+/**
+ * @return {Promise<{}>}
+ */
+export function findAllDimCategories() {
+  return new Promise((resolve, reject) => {
+    sql.execute({
+      query: sql.fromFile('./sql/timeAppCategory.findAllDimCategories.sql'),
+    })
+    .then(resolve)
+    .catch(reject);
+  });
+}
+
 export default {
   initialize: initialize,
   find: find,
@@ -193,5 +194,6 @@ export default {
   create: create,
   update: update,
   remove: remove,
-  createMany: createMany
+  createMany: createMany,
+  findAllDimCategories: findAllDimCategories,
 }

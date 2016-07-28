@@ -17,6 +17,7 @@ INSERT INTO [dbo].[TimeAppReport] (
   , [price]
   , [sum]
   , [employeeId]
+  , [categoryId]
   , [timeAppEmployeeId]
 )
 VALUES (
@@ -31,6 +32,7 @@ VALUES (
   , @price
   , @sum
   , @employeeId
+  , @categoryId
   , @timeAppEmployeeId
 )
 
@@ -50,6 +52,7 @@ SELECT
   , [price]
   , [sum]
   , [employeeId]
+  , [categoryId]
   , [timeAppEmployeeId]
   , [isUpdated]
   , [dateCreated]

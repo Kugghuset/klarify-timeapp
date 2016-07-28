@@ -255,6 +255,21 @@ export function mergeToMaster() {
   });
 }
 
+/**
+ * Finds all TimeAppReports where [isUpdated] = 1
+ *
+ * @return {Promise<{}[]>}
+ */
+export function findUpdated() {
+  return new Promise((resolve, reject) => {
+    sql.execute({
+      query: sql.fromFile('./sql/timeAppReport.findUpdated.sql'),
+    })
+    .then(resolve)
+    .catch(reject);
+  });
+}
+
 export default {
   initialize: initialize,
   find: find,
@@ -265,4 +280,5 @@ export default {
   createMany: createMany,
   mergeMany: mergeMany,
   mergeToMaster: mergeToMaster,
+  findUpdated: findUpdated,
 }

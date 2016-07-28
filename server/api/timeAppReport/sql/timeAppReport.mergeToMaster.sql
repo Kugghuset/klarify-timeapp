@@ -141,12 +141,14 @@ BEGIN
         ([Target].[Comment] IS NULL OR [Target].[Comment] != [Source].[comment])
       OR [Target].[Code] != [Source].[code]
       OR [Target].[Hourly Price] != [Source].[price]
+      OR [Target].[CategoryId] != [Source].[categoryId]
   ) THEN UPDATE SET
       [Target].[Comment] = [Source].[comment]
     , [Target].[Code] = [Source].[code]
     , [Target].[Hourly Price] = [Source].[price]
     , [Target].[Adjusted Amount] = [Source].[adjustedAmount]
     , [Target].[Discount] = [Source].[discount]
+    , [Target].[CategoryId] = [Source].[categoryId]
 
   /**
    * When there isn't a match,
@@ -165,6 +167,7 @@ BEGIN
       , [Discount]
       , [Adjusted Amount]
       , [EmployeeID]
+      , [CategoryID]
       , [TimeAppReportId]
     ) VALUES (
         [Source].[date]
@@ -178,6 +181,7 @@ BEGIN
       , [Source].[discount]
       , [Source].[adjustedAmount]
       , [Source].[employeeId]
+      , [Source].[categoryId]
       , [Source].[timeAppReportId]
     )
   ; -- This semicolon is more important than life.
