@@ -45,6 +45,7 @@ SELECT
   , [TAR].[price]
   , [TAR].[sum]
   , [TAR].[employeeId]
+  , [TAR].[categoryId]
   , [timeAppReportId]
 INTO [dbo].[__TimeAppReport__]
 FROM (
