@@ -341,7 +341,7 @@ export function insertData(context) {
     // Merge the new timeAppReports into the TimeAppReport table
     .then(TimeAppReport.mergeMany)
     // Categorize all updated TimeAppReports
-    .then(category.categorizeUpdated)
+    // .then(category.categorizeUpdated)
     // Merge updated timeReports into actual live table
     .then(TimeAppReport.mergeToMaster)
     .then(data => utils.logPromise(data, 'Completed inserting data.'))
@@ -353,8 +353,8 @@ export function insertData(context) {
 }
 
 const _dates = {
-  dateFrom: moment().startOf('year').subtract(3, 'years').toDate(),
-  // dateFrom: moment().startOf('month').toDate(),
+  // dateFrom: moment().startOf('year').subtract(3, 'years').toDate(),
+  dateFrom: moment().startOf('month').toDate(),
   dateTo: moment().endOf('year').toDate(),
   // dateFrom: moment(new Date('2014')).toDate(),
   // dateTo: moment(new Date('2014')).endOf('year').toDate(),
