@@ -89,7 +89,7 @@ function _request(method = 'GET', url, data, options = {}, dataOnly) {
 
     Vue.http(_.assign({}, options, {
       method: method,
-      data: data,
+      body: data,
       url: url,
       headers: headers,
     }))

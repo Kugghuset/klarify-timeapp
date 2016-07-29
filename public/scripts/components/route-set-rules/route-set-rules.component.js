@@ -41,6 +41,14 @@ const RouteSetRulesComponent = Vue.extend({
     saveRule: function (report) {
       const _report = JSON.parse(JSON.stringify(report));
       console.log(_report);
+
+      http.put(`api/time-app-categories/set-rule`, _report)
+      .then(data => {
+        console.log(data);
+      })
+      .catch(err => {
+        console.log(err);
+      });
     }
   }
 });

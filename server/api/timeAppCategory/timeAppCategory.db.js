@@ -9,6 +9,8 @@ import Promise from 'bluebird';
 import utils from '../../utils/utils';
 import config from '../../config';
 
+import TimeAppCategoryRule from './../timeAppCategoryRule/timeAppCategoryRule.db';
+
 /**
  * Returns a params object for *timeAppCategory*.
  *
@@ -225,6 +227,27 @@ export function mergeCategorizedReports(catReports) {
   .catch(Promise.reject);
 }
 
+/**
+ * @param {{}} reportRule
+ * @return {Promise<{}>}
+ */
+export function setRule(reportRule) {
+  return new Promise((resolve, reject) => {
+    utils.print(reportRule)
+
+    const { timeAppCategory } = reportRule;
+
+    /**
+     * TODO:
+     * - Create or update *reportRule*
+     * - Cateogorize the report
+     * - Return the report
+     */
+
+    resolve();
+  });
+}
+
 export default {
   initialize: initialize,
   find: find,
@@ -235,4 +258,5 @@ export default {
   createMany: createMany,
   findAllDimCategories: findAllDimCategories,
   mergeCategorizedReports: mergeCategorizedReports,
+  setRule: setRule,
 }

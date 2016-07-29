@@ -8,6 +8,7 @@ SELECT TOP 10
   , [TAR].[employeeName]
   , [TAR].[employeeId]
   , [TAR].[categoryId]
+  , [TAC].[timeAppCategoryId] AS [timeAppCategory.timeAppCategoryId]
   , [TAC].[categoryId] AS [timeAppCategory.categoryId]
   , [C].[Category] AS [timeAppCategory.categoryName]
   , [TAC].[probabilityPercentage] AS [timeAppCategory.probabilityPercentage]

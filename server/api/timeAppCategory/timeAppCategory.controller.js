@@ -77,6 +77,15 @@ export function getDimCategories(req, res) {
   .catch(err => utils.handleError(res, err));
 }
 
+/**
+ * Route: PUT '/api/timeAppCategorys/set-rule'
+ */
+export function setRule(req, res) {
+  TimeAppCategory.setRule(req.body)
+  .then(data => res.status(200).json(data))
+  .catch(err => utils.handleError(res, err));
+};
+
 export default {
   index: index,
   show: show,
@@ -84,4 +93,5 @@ export default {
   update: update,
   remove: remove,
   getDimCategories: getDimCategories,
+  setRule: setRule,
 }
