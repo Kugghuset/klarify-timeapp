@@ -81,6 +81,12 @@ export const isAuthenticated = (req, res, next) => {
   let _token;
 
   return compose().use(function (req, res, next) {
+
+    /**
+     * Temporary disable auth.
+     */
+    return next();
+
     // Find the token
     _token = findToken(req, true);
 
@@ -98,23 +104,6 @@ export const isAuthenticated = (req, res, next) => {
      * Handle existance of whatever was found when decoding the token.
      * Below is only an example
      */
-
-    // // Find the user and attach it to the response object
-    // return User.findById(_userId)
-    // .then((user) => {
-    //   // Add the user to the response
-    //   res.user = user;
-
-    //   // If there is no registered user, return a 401 unauthorized
-    //   if (!_userId || !req.user.userId) {
-    //     return res.status(401).send('Unauthorized');
-    //   }
-
-    //   next();
-    // })
-    // .catch((err) => {
-    //   return utils.handleError(res, err);
-    // });
 
     // If there is no registered user, return a 401 unauthorized
     if (!_userId || !req.user.userId) {

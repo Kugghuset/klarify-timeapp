@@ -1,24 +1,19 @@
 'use strict'
 
-// Import styles
+// import styles
 import 'normalize.css/normalize.css';
-import 'milligram';
+import 'dropzone/dist/min/dropzone.min.css';
+import 'selectize/dist/css/selectize.css'
 import '../style/main.scss';
 
 // Ensure jQuery is attached to the window.
 window.jQuery = window.$ = require('jquery');
 
 import Vue from 'vue';
-import components from './components/components';
+import Dropzone from 'dropzone';
 
-/**
- * Instantiate the Vue app.
- */
-const app = new Vue({
-  el: '#app-mount',
-  components: components,
-});
+Dropzone.autoDiscover = false;
 
-$(window).ready(() => {
-  // Do something
-}, $);
+import './filters';
+import './directives';
+import routes from './routes';

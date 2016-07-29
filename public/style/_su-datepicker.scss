@@ -1,0 +1,100 @@
+.__su-datepicker {
+  display: inline-block;
+
+  &.__su-input {
+    input {
+      background-color: $gray-light;
+    }
+    label {
+      &:hover {
+        input {
+          background-color: darken($color: $gray-light, $amount: 3%);
+        }
+      }
+      input {
+        &:focus {
+          background-color: darken($color: $gray-light, $amount: 5%);
+        }
+      }
+    }
+
+  }
+}
+
+.rd-container {
+  z-index: 1;
+  background-color: $blue;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  position: absolute;
+  border-radius: 4px;
+  font-size: $font-size-xs;
+  padding-top: #{$size-xs / 2};
+
+  .rd-month-label {
+    color: $white;
+    position: relative;
+    text-align: center;
+    left: $size-ms;
+    width: calc(100% - #{2 * $size-ms});
+  }
+  .rd-next, .rd-back {
+    position: absolute;
+    margin: #{$size-xs / 2};
+    border: thin none;
+    outline: none;
+    background: transparent;
+    color: $white;
+
+    @extend .su-icon-chevron;
+
+    &:hover {
+      transform: scale(1.1);
+    }
+    &:active {
+      transform: scale(1.2);
+    }
+  }
+  .rd-next {
+    right: 0;
+    &::before {
+      transform: rotate(45deg);
+    }
+  }
+
+  .rd-days {
+    background-color: $gray-light;
+    text-align: center;
+    border-collapse: collapse;
+    border: thin none;
+    table-layout: fixed;
+    white-space: nowrap;
+    width: $size-datpicker;
+
+    .rd-day-head {
+      color: $white;
+      font-weight: 100;
+      background-color: $blue;
+    }
+    .rd-day-body {
+      padding: 3px;
+      border-radius: #{$size-xs / 2};
+      width: floor($number: (100 / 7));
+
+      &:not(.rd-day-disabled) {
+        color: $black;
+        @include background-hover-active($gray-light);
+        cursor: pointer;
+      }
+      &.rd-day-disabled {
+        color: $gray;
+      }
+      &.rd-day-prev-month, &.rd-day-next-month {
+        color: $white;
+      }
+    }
+    .rd-day-selected {
+      color: $white;
+      @include background-hover-active($blue);
+    }
+  }
+}

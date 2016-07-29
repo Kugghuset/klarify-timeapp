@@ -1,0 +1,80 @@
+.__su-sidebar {
+  position: absolute;
+  bottom: 0;
+  height: 100%;
+  background-color: $gray;
+  left: 0;
+  overflow-y: auto;
+  width: $size-menu;
+  max-width: 100%;
+  transition: width $animation-speed, transform $animation-speed, left $animation-speed;
+  z-index: 1;
+
+  .top-block {
+    height: 77px;
+    width: 100%;
+    background-color: $gray-dark;
+  }
+
+  nav {
+    padding: $size-xxl 0;
+
+    a, .logout {
+      display: block;
+      position: relative;
+      padding: $size-ms;
+      padding-left: $size-xxl;
+      text-decoration: none;
+      font-size: $font-size-m;
+      color: $white;
+      cursor: pointer;
+      transition: background-color $animation-speed, color $animation-speed;
+      @include background-hover-active($gray, 5%, 10%);
+
+
+      &::after {
+        content: '';
+        position: absolute;
+        border-bottom: $size-xs solid transparent;
+        border-top: $size-xs solid transparent;
+        border-right: 0 solid $gray-light;
+        right: 0;
+        top: 50%;
+        transform: translate3d(0,-50%, 0);
+        transition: border $animation-speed;
+      }
+
+      &.v-link-active {
+        color: $blue;
+
+        &::after {
+          border-right: $size-xs solid $gray-light;
+        }
+      }
+    }
+    .logout {
+      color: $black;
+
+      &:hover, &:active {
+        color: $gray-light;
+      }
+    }
+  }
+
+  @include breakpoint(break-l) {
+    width: $size-menu-s;
+
+    nav a, nav .logout {
+      font-size: $font-size-s;
+    }
+  }
+
+  @include breakpoint(break-s) {
+    left: -#{$size-menu-s};
+
+    &.menu-open {
+      transform: translate3d($size-menu-s, 0, 0);
+      box-shadow: 0 12px 15px 0 rgba(0, 0, 0, 0.24);;
+    }
+  }
+}

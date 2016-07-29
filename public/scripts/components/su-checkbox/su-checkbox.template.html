@@ -1,0 +1,7 @@
+<div class="__su-checkbox">
+  <input type="checkbox" v-model="checked" :name.once="suName" :id.once="suName">
+  <label :for="suName">
+    <span class="su-checkbox-box"></span>
+    <slot></slot>
+  </label>
+</div>

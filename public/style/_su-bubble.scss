@@ -1,0 +1,41 @@
+.__su-bubble {
+  display: inline-block;
+  position: absolute;
+  background-color: $white;
+  font-size: $font-size-s;
+  padding: $size-ms;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  @include su-border-radius;
+  transition: opacity $animation-speed, transform $animation-speed;
+  opacity: 0;
+  transform: scale3d(0, 0, 0);
+
+  * {
+    font-size: $font-size-s;
+    line-height: 1.4;
+  }
+
+  &::before {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: $size-xs solid transparent;
+    border-right: $size-xs solid transparent;
+    border-bottom: $size-xs solid $white;
+    top: -#{$size-xs};
+    left: 50%;
+    transform: translate3d(-50%, 0, 0);
+  }
+
+  &.is-open {
+    opacity: 1;
+    transform: scale3d(1, 1, 1);
+  }
+
+  &.center-text {
+    text-align: center;
+  }
+}

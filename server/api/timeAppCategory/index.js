@@ -7,6 +7,7 @@ import auth from '../../services/auth/auth.service';
 const router = express.Router();
 
 router.get('/', auth.isAuthenticated(), controller.index);
+router.get('/dim-categories', auth.isAuthenticated(), controller.getDimCategories);
 router.get('/:id', auth.isAuthenticated(), controller.show);
 router.post('/', auth.isAuthenticated(), controller.create);
 router.put('/:id', auth.isAuthenticated(), controller.update);

@@ -1,0 +1,15 @@
+$breakpoints: (
+  "break-s": "(max-width: 535px)",
+  "break-ms": "(max-width: 800px)",
+  "break-m": "(max-width: 900px)",
+  "break-l": "(max-width: 1200px)",
+  "break-xl": "(max-width: 1300px)",
+) !default;
+
+@mixin breakpoint($point) {
+  $query: map-get($breakpoints, $point);
+
+  @media #{$query} {
+    @content;
+  }
+}

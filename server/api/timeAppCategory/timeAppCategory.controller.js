@@ -68,10 +68,20 @@ export const remove = (req, res) => {
   .catch((err) => utils.handleError(res, err));
 }
 
+/**
+ * Route: GET '/api/timeAppCategorys/dim-categories'
+ */
+export function getDimCategories(req, res) {
+  TimeAppCategory.findAllDimCategories()
+  .then(categories => res.status(200).json(categories))
+  .catch(err => utils.handleError(res, err));
+}
+
 export default {
   index: index,
   show: show,
   create: create,
   update: update,
   remove: remove,
+  getDimCategories: getDimCategories,
 }

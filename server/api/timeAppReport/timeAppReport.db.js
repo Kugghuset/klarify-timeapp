@@ -270,6 +270,19 @@ export function findUpdated() {
   });
 }
 
+/**
+ * @return {Promise<{}[]>}
+ */
+export function findCategorized() {
+  return new Promise((resolve, reject) => {
+    sql.execute({
+      query: sql.fromFile('./sql/timeAppReport.findCategorized.sql'),
+    })
+    .then(data => resolve(utils.objectify(data)))
+    .catch(reject);
+  });
+}
+
 export default {
   initialize: initialize,
   find: find,
@@ -281,4 +294,5 @@ export default {
   mergeMany: mergeMany,
   mergeToMaster: mergeToMaster,
   findUpdated: findUpdated,
+  findCategorized: findCategorized,
 }

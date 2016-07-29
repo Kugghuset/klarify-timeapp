@@ -1,0 +1,13 @@
+<div class="__su-prompt">
+  <su-modal v-ref:su-modal :title="title" :clicked-outside="_onCancel">
+    <div class="padded">{{ message }}</div>
+    <div slot="under" class="grid">
+      <section class="col-1-2">
+        <su-button class="fill" :clicked="_onCancel" :params="params">Cancel</su-button>
+      </section>
+      <section class="col-1-2">
+        <su-button class="fill" :clicked="_onOk" :params="params" color="green">Ok</su-button>
+      </section>
+    </div>
+  </su-modal>
+</div>

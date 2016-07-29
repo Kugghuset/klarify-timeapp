@@ -1,0 +1,56 @@
+.__su-status-item {
+  $left-width: 100px;
+
+  display: block;
+  background-color: $white;
+  position: relative;
+  overflow-y: hidden;
+
+  &:not(:last-of-type) {
+    border-bottom: 2px solid $gray-light;
+  }
+
+  .description {
+    position: absolute;
+    width: $left-width;
+    border-right: 2px solid $gray-light;
+    font-size: $font-size-xs;
+    height: 100%;
+
+    .content {
+      text-align: center;
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translate3d(0, -50%, 0);
+      width: calc(100% - #{$left-width / 10});
+
+      .status {
+        text-transform: uppercase;
+        text-align: center;
+        color: $white;
+        border-radius: $size-xs 0 0 $size-xs;
+        padding: #{$size-xs / 6} 0;
+        margin-bottom: $size-xs / 4;
+
+        &.successful {
+          background-color: $green;
+        }
+        &.failed {
+          background-color: $gray;
+        }
+      }
+    }
+  }
+
+  .title {
+    position: relative;
+    display: inline-flex;
+    padding: $size-s;
+    font-size: $font-size-s;
+    left: $left-width;
+    width: calc(100% - #{$left-width});
+    white-space: pre-line;
+    word-break: break-word;
+  }
+}

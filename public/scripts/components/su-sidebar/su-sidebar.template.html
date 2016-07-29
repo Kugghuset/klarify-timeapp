@@ -1,0 +1,9 @@
+<aside class="__su-sidebar" :class="{ 'menu-open': menuOpen }" v-rubber-scroll v-no-scroll-on="['su-modal-open', 'su-modal-close']">
+  <div class="top-block"></div>
+  <nav>
+    <a v-for="route in routes" v-link="route.url" @click="menuOpen = false">
+      {{ route.title }}
+    </a>
+    <div @click="logout" class="logout">Log out</div>
+  </nav>
+</aside>

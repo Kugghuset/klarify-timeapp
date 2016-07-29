@@ -8,7 +8,7 @@ import utils from '../../utils/utils';
 TimeAppReport.initialize();
 
 /**
- * Route: GET '/api/timeAppReports/'
+ * Route: GET '/api/time-app-reports/'
  */
 export const index = (req, res) => {
   // Get the top and page for pagination
@@ -20,7 +20,7 @@ export const index = (req, res) => {
 }
 
 /**
- * Route: GET '/api/timeAppReports/:id'
+ * Route: GET '/api/time-app-reports/:id'
  */
 export const show = (req, res) => {
   // Get the id
@@ -32,7 +32,7 @@ export const show = (req, res) => {
 }
 
 /**
- * Route: POST '/api/timeAppReports/'
+ * Route: POST '/api/time-app-reports/'
  */
 export const create = (req, res) => {
   // Get the timeAppReport
@@ -44,7 +44,7 @@ export const create = (req, res) => {
 }
 
 /**
- * Route: PUT '/api/timeAppReports/:id'
+ * Route: PUT '/api/time-app-reports/:id'
  */
 export const update = (req, res) => {
   // Get the id and timeAppReport
@@ -57,7 +57,7 @@ export const update = (req, res) => {
 }
 
 /**
- * Route: DELETE '/api/timeAppReports/:id'
+ * Route: DELETE '/api/time-app-reports/:id'
  */
 export const remove = (req, res) => {
   // Get the id
@@ -68,10 +68,20 @@ export const remove = (req, res) => {
   .catch((err) => utils.handleError(res, err));
 }
 
+/**
+ * Route: GET '/api/time-app-reports/categorized'
+ */
+export function getCategorized(req, res) {
+  TimeAppReport.findCategorized()
+  .then(data => res.status(200).json(data))
+  .catch(err => utils.handleError(res, err));
+}
+
 export default {
   index: index,
   show: show,
   create: create,
   update: update,
   remove: remove,
+  getCategorized: getCategorized,
 }

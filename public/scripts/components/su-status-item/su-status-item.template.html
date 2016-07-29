@@ -1,0 +1,11 @@
+<div class="__su-status-item">
+  <div class="description">
+    <div class="content">
+      <div class="status" :class="{ 'successful': successful, 'failed': !successful }">{{ successful ? 'Success' : 'Fail' }}</div>
+      <div class="date">{{ date | date 'YYYY-MM-DD' }}</div>
+    </div>
+  </div>
+  <div class="title">
+    {{ title }}
+  </div>
+</div>

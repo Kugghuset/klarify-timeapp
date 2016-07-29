@@ -2,7 +2,7 @@
 
 var path = require('path');
 var webpack = require('webpack');
-var LiveReload = require('webpack-livereload-plugin');
+var autoprefixer = require('autoprefixer');
 
 module.exports = {
   context: path.resolve('./public/scripts'),
@@ -12,6 +12,9 @@ module.exports = {
     path: './public/dist'
   },
   module: {
+    externals: {
+      'Vue': 'vue'
+    },
     loaders: [
       {
         test: /\.js$/,
@@ -22,21 +25,24 @@ module.exports = {
         }
       },
       {
-        test: /\.html$/,
+        test: /\.(html|md)$/,
         loader: 'raw-loader'
       },
       {
         test: /\.scss$/,
-        loaders: ['style', 'css', 'sass']
+        loaders: ['style', 'css', 'postcss', 'sass']
       },
       {
         test: /\.css$/,
-        loaders: ['style', 'css']
+        loaders: ['style', 'css', 'postcss']
+      },
+      {
+        test: /\.(eot|svg|ttf|woff|woff2)$/,
+        loader: 'file?name=public/fonts/[name].[ext]'
       }
     ]
   },
   plugins: [
-    new LiveReload({ appendScriptTag: true }),
     new webpack.ProvidePlugin({
       $: 'jquery',
       jQuery: 'jquery',
@@ -45,5 +51,8 @@ module.exports = {
   ],
   resolve: {
     extensions: ['', '.js']
-  }
+  },
+  postcss: function () {
+    return [autoprefixer];
+  },
 };

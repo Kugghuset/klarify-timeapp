@@ -1,0 +1,52 @@
+.__su-button {
+  padding: $size-xs $size-s;
+  border: thin none;
+  color: $white;
+  font-size: $font-size-s;
+  outline: none;
+  transition: background-color $animation-speed, box-shadow $animation-speed;
+  @include background-hover-active($gray, 5%, 10%);
+  @include su-border-radius;
+
+  &:hover {
+    box-shadow: 0px 2px 5px rgba($color: $black, $alpha: 0.1);
+  }
+  &:active {
+    box-shadow: 0px 2px 5px rgba($color: $black, $alpha: 0.2);
+  }
+
+  &.colored, &.green {
+    @include background-hover-active($green, 5%, 10%);
+  }
+
+  &.blue {
+    @include background-hover-active($blue, 5%, 10%);
+  }
+
+  &.loading {
+    pointer-events: none;
+    box-shadow: inset 0px 2px 5px rgba($color: $black, $alpha: 0.2);
+  }
+
+  &.big-text {
+    font-size: $font-size-m;
+  }
+
+  &.add-icon {
+    .su-icon-add {
+      margin-bottom: #{$size-xs / 2};
+    }
+  }
+
+  &:disabled {
+    @include all-states {
+      color: $gray-dark;
+      background-color: lighten($color: $gray, $amount: 10%);
+      box-shadow: inset 0px 2px 5px rgba($color: $black, $alpha: 0.2);
+
+      &.add-icon {
+        border-color: $gray;
+      }
+    }
+  }
+}

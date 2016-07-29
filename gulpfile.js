@@ -48,7 +48,7 @@ gulp.task('watch', function () {
 });
 
 // Create a basis build task
-// gulp.task('build', ['build:server', 'build:frontend']);
-gulp.task('build', ['build:server']);
+gulp.task('build', ['build:server', 'build:frontend']);
+// gulp.task('build', ['build:server']);
 
 gulp.task('default', ['build', 'watch', 'serve'])
