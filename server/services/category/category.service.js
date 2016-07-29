@@ -12,10 +12,82 @@ import TimeAppScore from './../../api/timeAppCategoryScore/timeAppCategoryScore.
 import TimeAppCategoryRule from './../../api/timeAppCategoryRule/timeAppCategoryRule.db';
 
 /**
- * @return {Promise}
+ * TODO: Rename TimeAppScore to TimeAppCriteria
+ */
+
+/**
+ * Matches the *report* against *rule* based on all *timeAppCriteria*.
+ *
+ * @param {{ type: String, employeeName: String, date: Date, customerName: String, projectName: String, comment: String, code: String, quantity: Number, price: Number, sum: Number, categoryId: Number, isUpdated: Boolean }} report
+ * @param {{ description: String, customerName: String, projectName: String, code: String, employeeId: Number, categoryId: Number }} rule
+ * @param {{ colName: String, value: Number }[]} timeAppCriteria
+ * @return {{ sum: Number, categoryId: Number }}
+ */
+function matchRule(report, rule, timeAppCriteria) {
+  return _.chain(timeAppCriteria)
+    // Filter out any non matching criteria
+    .filter(criteria => report[criteria.colName] === rule[criteria.colName])
+    // Summarize and return the *sum* and *categoryId*
+    .thru(criteria => ({
+      sum: _.sumBy(criteria, 'value'),
+      categoryId: rule.categoryId,
+    }))
+    .value()
+}
+
+/**
+ * Categorizes a single *report* against *rules* and
+ *
+ * @param {{ type: String, employeeName: String, date: Date, customerName: String, projectName: String, comment: String, code: String, quantity: Number, price: Number, sum: Number, categoryId: Number, isUpdated: Boolean }} report
+ * @param {{ description: String, customerName: String, projectName: String, code: String, employeeId: Number, categoryId: Number }[]} rules
+ * @param {{ colName: String, value: Number }[]} timeAppCriteria
+ * @param {{ categoryName: String, categoryId: Number }[]} categories
+ */
+function categorizeReport(report, rules, timeAppCriteria, categories) {
+  // Get all valid colNames
+  const _colNames = _.map(timeAppCriteria, 'colName');
+
+  // Get the max score possible
+  const _maxScore = _.sumBy(timeAppCriteria, 'value');
+
+  return _.chain(rules)
+    // Map over all rules and match *report* against *rule*
+    .map(rule => matchRule(report, rule, timeAppCriteria))
+    // Filter any non-matching values
+    .filter(score => 0 < score.sum)
+    /**
+     * Group by sum to get most often used category by each score.
+     * This to ensure it's less random when there are multiple categories
+     * with the same score.
+     */
+    .groupBy('sum')
+    /**
+     * Map over each array grouped by scores and create subgroups by their categoryId.
+     * Order these by length in descending order and pick the first one.
+     */
+    .map(grouped => _.chain(grouped).groupBy('categoryId').orderBy('length', 'desc').first().value())
+    // Flatten the array
+    .flatten()
+    // Order by score in descending order
+    .orderBy('sum', 'desc')
+    // Pick the first item, which is the one with the highest score.
+    .first()
+    // Assign the values from *report* on the *colNames* properties and also *timeAppReportId* and *employeeName*
+    .thru(score => _.assign({}, score, _.pick(report, _colNames.concat(['timeAppReportId', 'employeeName']))))
+    // Calculate the probabilityPercentage by getting the percentage of correct score
+    .thru(obj => _.assign({}, obj, { probabilityPercentage: Math.round(obj.sum / _maxScore * 100) }))
+    .value()
+}
+
+/**
+ * Categorizes all reports with the isUpdated flag
+ * and returns a promise of the scores.
+ *
+ * @return {Promise<{ sum: Number, categoryId: Number, customerName: String, projectName: String, code: String, employeeId:Number, timeAppReportId: Number, employeeName: String, probabilityPercentage: Number }[]>}
  */
 export function categorizeUpdated() {
   return new Promise((resolve, reject) => {
+    // Get all requried data from db
     const _promises = [
       TimeAppReport.findUpdated(),
       TimeAppCategory.findAllDimCategories(),
@@ -23,56 +95,45 @@ export function categorizeUpdated() {
       TimeAppCategoryRule.find(),
     ];
 
-
-    Promise.all(_.map(_promises, prom => prom.reflect()))
-    .then(proms => Promise.resolve(_.map(proms, prom => prom.isRejected() ? prom.reason() : prom.value())))
+    Promise.all(_promises)
     .then(([timeAppReports, categories, timeAppCriteria, rules]) => {
-      const _colNames = _.map(timeAppCriteria, 'colName');
+      // When all data is gotten, categorize all reports
+      const data = _.map(timeAppReports, report => categorizeReport(report, rules, timeAppCriteria, categories))
 
-      const _maxScore = _.sumBy(timeAppCriteria, 'value');
-
-      const data =_.chain(timeAppReports)
-        .map(report =>
-          _.chain(rules)
-            .map(rule => (
-              _.chain(timeAppCriteria)
-                .map(score => _.assign({}, score,  {
-                  isMatch: report[score.colName] === rule[score.colName],
-                  value: report[score.colName] === rule[score.colName] ? score.value : 0,
-                  categoryId: rule.categoryId,
-                  val: report[score.colName],
-                }))
-                .thru(_scores => ({
-                  scores: _scores,
-                  sum: _.sumBy(_scores, 'value'),
-                  categoryId: utils.firstDefined(_scores, 'categoryId'),
-                }))
-                .value()
-              )
-            )
-            .filter(score => 0 < score.sum)
-            .groupBy('sum')
-            .map(grouped => _.chain(grouped).orderBy('length', 'desc').first().value())
-            .flatten()
-            .orderBy('sum', 'desc')
-            .first()
-            .thru(row => _.pick(row, ['sum', 'categoryId']))
-            .thru(score => _.assign({}, score, _.pick(report, _colNames.concat(['timeAppReportId', 'employeeName']))))
-            .thru(obj => _.assign({}, obj, _.pick(_.find(categories, ({categoryId}) => categoryId == obj.categoryId), 'categoryName')))
-            .thru(obj => _.assign({}, obj, { probabilityPercentage: Math.round(obj.sum / _maxScore * 100) }))
-            .value()
-        )
-        .value();
-
-      utils.print(data)
       resolve(data);
     })
     .catch(reject);
   });
 }
 
-categorizeUpdated();
+/**
+ * Categorizes all *reports*
+ * and returns a promise of the scores.
+ *
+ * @param {{ type: String, employeeName: String, date: Date, customerName: String, projectName: String, comment: String, code: String, quantity: Number, price: Number, sum: Number, categoryId: Number, isUpdated: Boolean }[]} reports
+ * @return {Promise<{ sum: Number, categoryId: Number, customerName: String, projectName: String, code: String, employeeId:Number, timeAppReportId: Number, employeeName: String, probabilityPercentage: Number }[]>}
+ */
+export function categorizeReports(reports) {
+  return new Promise((resolve, reject) => {
+    // Get all requried data from db
+    const _promises = [
+      TimeAppCategory.findAllDimCategories(),
+      TimeAppScore.find(),
+      TimeAppCategoryRule.find(),
+    ];
+
+    Promise.all(_promises)
+    .then(([categories, timeAppCriteria, rules]) => {
+      // When all data is gotten, categorize all reports
+      const data = _.map(reports, report => categorizeReport(report, rules, timeAppCriteria, categories))
+
+      resolve(data);
+    })
+    .catch(reject);
+  });
+}
 
 export default {
   categorizeUpdated: categorizeUpdated,
+  categorizeReports: categorizeReports,
 }
