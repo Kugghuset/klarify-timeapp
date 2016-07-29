@@ -1,7 +1,7 @@
 'use strict'
 
 import express from 'express';
-import controller from './timeAppCategoryResult.controller';
+import controller from './timeAppCategoryCriteria.controller';
 import auth from '../../services/auth/auth.service';
 
 const router = express.Router();

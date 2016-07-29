@@ -8,12 +8,8 @@ import utils from '../../utils/utils';
 
 import TimeAppReport from './../../api/timeAppReport/timeAppReport.db';
 import TimeAppCategory from './../../api/timeAppCategory/timeAppCategory.db';
-import TimeAppScore from './../../api/timeAppCategoryScore/timeAppCategoryScore.db';
+import TimeAppCategoryCriteria from './../../api/timeAppCategoryCriteria/timeAppCategoryCriteria.db';
 import TimeAppCategoryRule from './../../api/timeAppCategoryRule/timeAppCategoryRule.db';
-
-/**
- * TODO: Rename TimeAppScore to TimeAppCriteria
- */
 
 /**
  * Matches the *report* against *rule* based on all *timeAppCriteria*.
@@ -91,14 +87,18 @@ export function categorizeUpdated() {
     const _promises = [
       TimeAppReport.findUpdated(),
       TimeAppCategory.findAllDimCategories(),
-      TimeAppScore.find(),
+      TimeAppCategoryCriteria.find(),
       TimeAppCategoryRule.find(),
     ];
+
+    utils.log('Categorizing updated reports', 'info');
 
     Promise.all(_promises)
     .then(([timeAppReports, categories, timeAppCriteria, rules]) => {
       // When all data is gotten, categorize all reports
       const data = _.map(timeAppReports, report => categorizeReport(report, rules, timeAppCriteria, categories))
+
+      utils.log('Completed categorizing updated reports', 'info', { reportsLength: data.length });
 
       resolve(data);
     })
@@ -118,14 +118,18 @@ export function categorizeReports(reports) {
     // Get all requried data from db
     const _promises = [
       TimeAppCategory.findAllDimCategories(),
-      TimeAppScore.find(),
+      TimeAppCategoryCriteria.find(),
       TimeAppCategoryRule.find(),
     ];
+
+    utils.log('Categorizing reports', 'info', { reportsLength: reports.length });
 
     Promise.all(_promises)
     .then(([categories, timeAppCriteria, rules]) => {
       // When all data is gotten, categorize all reports
       const data = _.map(reports, report => categorizeReport(report, rules, timeAppCriteria, categories))
+
+      utils.log('Completed categorizing reports', 'info', { reportsLength: data.length });
 
       resolve(data);
     })
@@ -137,15 +141,29 @@ export function categorizeReports(reports) {
  * Merges timeAppCategories and updates categoryIds of reports.
  *
  * @param {{ sum: Number, categoryId: Number, customerName: String, projectName: String, code: String, employeeId:Number, timeAppReportId: Number, employeeName: String, probabilityPercentage: Number }[]} catReports
+ * @return {Promise}
  */
 export function storeCategorizedReports(catReports) {
-  return new Promise((resolve, reject) => {
-    // Do something
-    resolve();
-  });
+  return TimeAppCategory.mergeCategorizedReports(catReports);
+}
+
+/**
+ * @param {{ type: String, employeeName: String, date: Date, customerName: String, projectName: String, comment: String, code: String, quantity: Number, price: Number, sum: Number, categoryId: Number, isUpdated: Boolean }[]} [reports]
+ */
+export function categorizeAndStore(reports) {
+  return (
+    _.isUndefined(reports)
+      ? categorizeUpdated()
+      : categorizeReports(reports)
+  )
+  .then(data => storeCategorizedReports(data))
+  .then(Promise.resolve)
+  .catch(Promise.reject);
 }
 
 export default {
   categorizeUpdated: categorizeUpdated,
   categorizeReports: categorizeReports,
+  storeCategorizedReports: storeCategorizedReports,
+  categorizeAndStore: categorizeAndStore,
 }

@@ -28,9 +28,8 @@ export default (app, log) => {
   app.use('/api/time-app-reports', require('./api/timeAppReport').default);
   app.use('/api/time-app-discounts', require('./api/timeAppDiscount').default);
   app.use('/api/time-app-category-rules', require('./api/timeAppCategoryRule').default);
-  app.use('/api/time-app-category-scores', require('./api/timeAppCategoryScore').default);
+  app.use('/api/time-app-category-criteria', require('./api/timeAppCategoryCriteria').default);
   app.use('/api/time-app-category-results', require('./api/timeAppCategoryResult').default);
-  app.use('/api/time-app-category-blobs', require('./api/timeAppCategoryBlob').default);
   app.use('/api/time-app-categorys', require('./api/timeAppCategory').default);
   /// Stop inject routes ///
 

@@ -52,7 +52,7 @@ BEGIN
 END
 
 /**
- * Ensure [FactKugghusetID] exists on _FactKugghuset
+ * Ensure [FactKugghusetId] exists on _FactKugghuset
  * by adding it if it doesn't exist.
  */
 IF NOT EXISTS(SELECT * FROM sys.columns
@@ -60,7 +60,7 @@ IF NOT EXISTS(SELECT * FROM sys.columns
                 AND Object_ID = Object_ID(N'_FactKugghuset'))
 BEGIN
   ALTER TABLE [dbo].[_FactKugghuset]
-  ADD [FactKugghusetID] BigInt IDENTITY(1, 1) PRIMARY KEY NOT NULL
+  ADD [FactKugghusetId] BigInt IDENTITY(1, 1) PRIMARY KEY NOT NULL
 END
 
 IF EXISTS(SELECT * FROM INFORMATION_SCHEMA.COLUMNS

@@ -1,11 +1,11 @@
 'use strict'
 
-import TimeAppCategoryScore from './timeAppCategoryScore.db';
+import TimeAppCategoryCriteria from './timeAppCategoryCriteria.db';
 import config from '../../config';
 import utils from '../../utils/utils';
 
-// Initialize the timeAppCategoryScore table
-TimeAppCategoryScore.initialize();
+// Initialize the timeAppCategoryCriteria table
+TimeAppCategoryCriteria.initialize();
 
 /**
  * Route: GET '/api/timeAppCategoryScores/'
@@ -14,7 +14,7 @@ export const index = (req, res) => {
   // Get the top and page for pagination
   let {top, page} = req.query;
 
-  TimeAppCategoryScore.find(top, page)
+  TimeAppCategoryCriteria.find(top, page)
   .then((timeAppCategoryScores) => res.status(200).json(timeAppCategoryScores))
   .catch((err) => utils.handleError(res, err));
 }
@@ -26,8 +26,8 @@ export const show = (req, res) => {
   // Get the id
   let {id} = req.params;
 
-  TimeAppCategoryScore.findById(id)
-  .then((timeAppCategoryScore) => res.status(200).json(timeAppCategoryScore))
+  TimeAppCategoryCriteria.findById(id)
+  .then((timeAppCategoryCriteria) => res.status(200).json(timeAppCategoryCriteria))
   .catch((err) => utils.handleError(res, err));
 }
 
@@ -35,11 +35,11 @@ export const show = (req, res) => {
  * Route: POST '/api/timeAppCategoryScores/'
  */
 export const create = (req, res) => {
-  // Get the timeAppCategoryScore
+  // Get the timeAppCategoryCriteria
   let _timeAppCategoryScore = req.body;
 
-  TimeAppCategoryScore.create(_timeAppCategoryScore)
-  .then((timeAppCategoryScore) => res.status(200).json(timeAppCategoryScore))
+  TimeAppCategoryCriteria.create(_timeAppCategoryScore)
+  .then((timeAppCategoryCriteria) => res.status(200).json(timeAppCategoryCriteria))
   .catch((err) => utils.handleError(res, err));
 }
 
@@ -47,12 +47,12 @@ export const create = (req, res) => {
  * Route: PUT '/api/timeAppCategoryScores/:id'
  */
 export const update = (req, res) => {
-  // Get the id and timeAppCategoryScore
+  // Get the id and timeAppCategoryCriteria
   let {id} = req.params;
   let _timeAppCategoryScore = req.body;
 
-  TimeAppCategoryScore.update(id, _timeAppCategoryScore)
-  .then((timeAppCategoryScore) => res.status(200).json(timeAppCategoryScore))
+  TimeAppCategoryCriteria.update(id, _timeAppCategoryScore)
+  .then((timeAppCategoryCriteria) => res.status(200).json(timeAppCategoryCriteria))
   .catch((err) => utils.handleError(res, err));
 }
 
@@ -63,7 +63,7 @@ export const remove = (req, res) => {
   // Get the id
   let {id} = req.params;
 
-  TimeAppCategoryScore.remove(id)
+  TimeAppCategoryCriteria.remove(id)
   .then(() => res.status(201).send('No Content'))
   .catch((err) => utils.handleError(res, err));
 }

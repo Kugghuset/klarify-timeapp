@@ -7,8 +7,8 @@ BEGIN
   CREATE TABLE [dbo].[TimeAppCategory] (
       [timeAppCategoryId] BigInt IDENTITY(1, 1) PRIMARY KEY NOT NULL
     , [categoryId] BigInt NULL
-    , [sum] Int DEFAULT 0
-    , [probabilityPercentage] SmallInt NULL
+    , [sum] Int DEFAULT 0 NULL
+    , [probabilityPercentage] SmallInt DEFAULT 0 NULL
     , [timeAppReportId] BigInt NULL
     , [dateCreated] DateTime2 DEFAULT GETUTCDATE() NULL
     , [dateUpdated] DateTime2 DEFAULT GETUTCDATE() NULL

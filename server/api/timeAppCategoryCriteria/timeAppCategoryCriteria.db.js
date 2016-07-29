@@ -10,30 +10,30 @@ import utils from '../../utils/utils';
 import config from '../../config';
 
 /**
- * Returns a params object for *timeAppCategoryScore*.
+ * Returns a params object for *timeAppCategoryCriteria*.
  *
- * @param {Object} timeAppCategoryScore TimeAppCategoryScore object
+ * @param {Object} timeAppCategoryCriteria TimeAppCategoryCriteria object
  * @return {Object}
  */
-const getParams = (timeAppCategoryScore = {}) => {
+const getParams = (timeAppCategoryCriteria = {}) => {
   return {
-    timeAppCategoryScoreId: {
+    timeAppCategoryCriteriaId: {
       type: sql.BigInt,
-      val: timeAppCategoryScore.timeAppCategoryScoreId,
+      val: timeAppCategoryCriteria.timeAppCategoryCriteriaId,
     },
     colName: {
       type: sql.VarChar(255),
-      val: timeAppCategoryScore.colName,
+      val: timeAppCategoryCriteria.colName,
     },
     value: {
       type: sql.Int,
-      val: timeAppCategoryScore.value,
+      val: timeAppCategoryCriteria.value,
     },
   };
 };
 
 /**
- * Initializes the timeAppCategoryScore table.
+ * Initializes the timeAppCategoryCriteria table.
  *
  * @param {Booelan} logSuccess Defaults to false
  * @return {Promise}
@@ -41,16 +41,16 @@ const getParams = (timeAppCategoryScore = {}) => {
 export const initialize = (logSuccess = false) => new Promise((resolve, reject) => {
   // Execute the query
   sql.execute({
-    query: sql.fromFile('./sql/timeAppCategoryScore.initialize.sql')
+    query: sql.fromFile('./sql/timeAppCategoryCriteria.initialize.sql')
   })
   .then((res) => {
     if (logSuccess) {
-      utils.log('TimeAppCategoryScore table initialized.');
+      utils.log('TimeAppCategoryCriteria table initialized.');
     }
     resolve(res);
   })
   .catch((err) => {
-    utils.log('Could not initialize timeAppCategoryScore table:');
+    utils.log('Could not initialize timeAppCategoryCriteria table:');
     utils.log(err);
     reject(err);
   });
@@ -69,8 +69,8 @@ export const find = (__top, __page) => new Promise((resolve, reject) => {
 
   // No pagination will be used if *top* is undefined.
   let _query = _.isUndefined(top)
-    ? sql.fromFile('./sql/timeAppCategoryScore.find.sql')
-    : utils.paginateQuery(sql.fromFile('./sql/timeAppCategoryScore.find.sql'), 'FROM [dbo].[TimeAppCategoryScore]', top, offset);
+    ? sql.fromFile('./sql/timeAppCategoryCriteria.find.sql')
+    : utils.paginateQuery(sql.fromFile('./sql/timeAppCategoryCriteria.find.sql'), 'FROM [dbo].[TimeAppCategoryCriteria]', top, offset);
 
   // Execute the query
   sql.execute({
@@ -81,40 +81,40 @@ export const find = (__top, __page) => new Promise((resolve, reject) => {
 });
 
 /**
- * Returns a promise of the timeAppCategoryScores at *timeAppCategoryScoreId*.
+ * Returns a promise of the timeAppCategoryScores at *timeAppCategoryCriteriaId*.
  *
- * @param {Number} timeAppCategoryScoreId The ID of the timeAppCategoryScore
+ * @param {Number} timeAppCategoryCriteriaId The ID of the timeAppCategoryCriteria
  * @return {Promise} -> {Object}
  */
-export const findById = (timeAppCategoryScoreId) => new Promise((resolve, reject) => {
+export const findById = (timeAppCategoryCriteriaId) => new Promise((resolve, reject) => {
   // Execute the query and then objectify it if needed.
   sql.execute({
-    query: sql.fromFile('./sql/timeAppCategoryScore.findById.sql'),
+    query: sql.fromFile('./sql/timeAppCategoryCriteria.findById.sql'),
     params: {
-      timeAppCategoryScoreId: {
+      timeAppCategoryCriteriaId: {
         type: sql.BigInt,
-        val: timeAppCategoryScoreId
+        val: timeAppCategoryCriteriaId
       }
     }
   })
   .then((timeAppCategoryScores) => {
-    // Resolve the timeAppCategoryScore
+    // Resolve the timeAppCategoryCriteria
     resolve(utils.objectify(timeAppCategoryScores[0]));
   })
   .catch(reject);
 });
 
 /**
- * Creates a timeAppCategoryScore and returns it.
+ * Creates a timeAppCategoryCriteria and returns it.
  *
- * @param {Object} timeAppCategoryScore TimeAppCategoryScore to create
+ * @param {Object} timeAppCategoryCriteria TimeAppCategoryCriteria to create
  * @return {Promise} -> {Object}
  */
-export const create = (timeAppCategoryScore) => new Promise((resolve, reject) => {
-  let _params = getParams(timeAppCategoryScore);
+export const create = (timeAppCategoryCriteria) => new Promise((resolve, reject) => {
+  let _params = getParams(timeAppCategoryCriteria);
 
   sql.execute({
-    query: sql.fromFile('./sql/timeAppCategoryScore.create.sql'),
+    query: sql.fromFile('./sql/timeAppCategoryCriteria.create.sql'),
     params: _params,
   })
   .then((timeAppCategoryScores) => resolve(utils.objectify(timeAppCategoryScores[0])))
@@ -122,16 +122,16 @@ export const create = (timeAppCategoryScore) => new Promise((resolve, reject) =>
 });
 
 /**
- * @param {Number} timeAppCategoryScoreId The ID of the timeAppCategoryScore
- * @param {Object} timeAppCategoryScore The timeAppCategoryScore values to update with
+ * @param {Number} timeAppCategoryCriteriaId The ID of the timeAppCategoryCriteria
+ * @param {Object} timeAppCategoryCriteria The timeAppCategoryCriteria values to update with
  * @return {Promise} -> {Object}
  */
-export const update = (timeAppCategoryScoreId, timeAppCategoryScore) => new Promise((resolve, reject) => {
+export const update = (timeAppCategoryCriteriaId, timeAppCategoryCriteria) => new Promise((resolve, reject) => {
   // Get the params
-  let _params = getParams(_.assign({}, timeAppCategoryScore, { timeAppCategoryScoreId: timeAppCategoryScoreId }));
+  let _params = getParams(_.assign({}, timeAppCategoryCriteria, { timeAppCategoryCriteriaId: timeAppCategoryCriteriaId }));
 
   sql.execute({
-    query: sql.fromFile('./sql/timeAppCategoryScore.update.sql'),
+    query: sql.fromFile('./sql/timeAppCategoryCriteria.update.sql'),
     params: _params,
   })
   .then((timeAppCategoryScores) => resolve(utils.objectify(timeAppCategoryScores[0])))
@@ -139,18 +139,18 @@ export const update = (timeAppCategoryScoreId, timeAppCategoryScore) => new Prom
 });
 
 /**
- * Disables the timeAppCategoryScore and returns a promise of the void that is the timeAppCategoryScore.
+ * Disables the timeAppCategoryCriteria and returns a promise of the void that is the timeAppCategoryCriteria.
  *
- * @param {Number} timeAppCategoryScoreId
+ * @param {Number} timeAppCategoryCriteriaId
  * @return {Promise} -> {Object}
  */
-export const remove = (timeAppCategoryScoreId) => new Promise((resolve, reject) => {
+export const remove = (timeAppCategoryCriteriaId) => new Promise((resolve, reject) => {
   sql.execute({
-    query: sql.fromFile('./sql/timeAppCategoryScore.disable.sql'),
+    query: sql.fromFile('./sql/timeAppCategoryCriteria.disable.sql'),
     params: {
-      timeAppCategoryScoreId: {
+      timeAppCategoryCriteriaId: {
         type: sql.BigInt,
-        val: timeAppCategoryScoreId
+        val: timeAppCategoryCriteriaId
       }
     }
   })
@@ -164,7 +164,7 @@ export const remove = (timeAppCategoryScoreId) => new Promise((resolve, reject) 
  * @param {Array} timeAppCategoryScores Array of timeAppCategoryScores to insert into the DB
  * @return {Promise} -> {Array} Array of the recently inserted timeAppCategoryScores
  */
-export const createMany = (timeAppCategoryScores) => utils.createManySQL(timeAppCategoryScores, 'TimeAppCategoryScore', __dirname, 'timeAppCategoryScore');
+export const createMany = (timeAppCategoryScores) => utils.createManySQL(timeAppCategoryScores, 'TimeAppCategoryCriteria', __dirname, 'timeAppCategoryCriteria');
 
 export default {
   initialize: initialize,

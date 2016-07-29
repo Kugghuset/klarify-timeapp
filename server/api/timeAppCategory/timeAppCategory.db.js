@@ -175,7 +175,11 @@ export const remove = (timeAppCategoryId) => new Promise((resolve, reject) => {
 export const createMany = (timeAppCategorys) => utils.createManySQL(timeAppCategorys, 'TimeAppCategory', __dirname, 'timeAppCategory');
 
 /**
- * @return {Promise<{}>}
+ * Returns a promise of all DimCategories but *appified*
+ * by using alisases of categoryName and categoryId instead
+ * of just _Category_ and _CategoryID_.
+ *
+ * @return {Promise<{ categoryName: String, categoryId: Number }[]>}
  */
 export function findAllDimCategories() {
   return new Promise((resolve, reject) => {
@@ -187,6 +191,40 @@ export function findAllDimCategories() {
   });
 }
 
+/**
+ * Merges catReports into TimeAppCategory and TimeAppReport
+ * and returns a promise of it.
+ *
+ * @param {{ sum: Number, categoryId: Number, customerName: String, projectName: String, code: String, employeeId:Number, timeAppReportId: Number, employeeName: String, probabilityPercentage: Number }[]} catReports
+ * @return {Promise}
+ */
+export function mergeCategorizedReports(catReports) {
+  const _tableName = `TimeAppCategory_${utils.guid().slice(0, 10)}`;
+
+  const _meta = { tableName: _tableName };
+
+  const opts = {
+    collection: catReports,
+    tableName: _tableName,
+    dirname: __dirname,
+    baseName: 'timeAppCategory',
+    mainId: undefined,
+    skipName: undefined,
+    returnValues: false,
+    batchSize: 1000,
+  };
+
+  utils.log('Merging categories into TimeAppCategory and TimeAppReport', 'info', _meta);
+
+  return utils.createManySQLOpts(opts)
+  .then(rowCount => sql.execute({
+    query: sql.fromFile('./sql/timeAppCategory.mergeCategorizedReports.sql')
+      .replace(/\{table_name\}/ig, _tableName),
+  }))
+  .then(data => utils.logPromise(data, 'Completed merge of categories into TimeAppCategory and TimeAppReport', 'info', _meta))
+  .catch(Promise.reject);
+}
+
 export default {
   initialize: initialize,
   find: find,
@@ -196,4 +234,5 @@ export default {
   remove: remove,
   createMany: createMany,
   findAllDimCategories: findAllDimCategories,
+  mergeCategorizedReports: mergeCategorizedReports,
 }

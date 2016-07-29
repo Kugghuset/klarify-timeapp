@@ -3,11 +3,11 @@ Finds all timeAppCategoryScores non-disabled timeAppCategoryScores
 */
 
 SELECT
-    [timeAppCategoryScoreId]
+    [timeAppCategoryCriteriaId]
   , [colName]
   , [value]
   , [dateCreated]
   , [dateUpdated]
   , [isDisabled]
-FROM [dbo].[TimeAppCategoryScore]
+FROM [dbo].[TimeAppCategoryCriteria]
 WHERE [isDisabled] = 0

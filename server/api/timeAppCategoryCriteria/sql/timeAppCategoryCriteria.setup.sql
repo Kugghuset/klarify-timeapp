@@ -1,5 +1,5 @@
 
-INSERT INTO [dbo].[TimeAppCategoryScore] (
+INSERT INTO [dbo].[TimeAppCategoryCriteria] (
     [colName]
   , [value]
 )

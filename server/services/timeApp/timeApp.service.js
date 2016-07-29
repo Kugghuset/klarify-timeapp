@@ -341,7 +341,7 @@ export function insertData(context) {
     // Merge the new timeAppReports into the TimeAppReport table
     .then(TimeAppReport.mergeMany)
     // Categorize all updated TimeAppReports
-    // .then(category.categorizeUpdated)
+    .then(data => category.categorizeAndStore())
     // Merge updated timeReports into actual live table
     .then(TimeAppReport.mergeToMaster)
     .then(data => utils.logPromise(data, 'Completed inserting data.'))

@@ -5,7 +5,7 @@
     , [Code]
     , [CategoryID]
     , [EmployeeID]
-  FROM [dbo].[FactKugghuset]
+  FROM [dbo].[_FactKugghuset]
   WHERE [CategoryID] IS NOT NULL
     AND [EmployeeId] != 0
   GROUP BY
