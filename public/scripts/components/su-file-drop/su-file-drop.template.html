@@ -1,0 +1,10 @@
+<su-card class="__su-file-drop" :class="class" title="Select files to upload">
+  <su-button :_id="dropId" text="Add file(s)" :add="true" add-size="large" color="blue"></su-button>
+
+  <section class="file-list">
+    <su-item v-for="file in pendingFiles" header-title="Status" :header-value="!isLoading ? 'Awaiting upload' : 'Uploading'" :removed="remove" :params="[file]">{{ file.name }}</su-item>
+    <h3 class="padded-sides" v-if="!pendingFiles.length">No pending files</h3>
+  </section>
+
+  <su-button :clicked="upload" :disabled="!pendingFiles.length" color="green" text="Upload files"></su-button>
+</su-card>

@@ -1,0 +1,13 @@
+.__su-file-drop {
+  .__su-button {
+    width: calc(100% - #{$size-s * 2});
+    margin: 0 $size-s;
+  }
+
+  .file-list {
+    margin: $size-s 0;
+    padding: $size-s 0;
+    border-top: 2px solid $gray-light;
+    border-bottom: 2px solid $gray-light;
+  }
+}

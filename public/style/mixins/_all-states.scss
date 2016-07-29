@@ -1,0 +1,8 @@
+@mixin all-states {
+  &,
+  &:hover,
+  &:active,
+  &:focus {
+    @content;
+  }
+}

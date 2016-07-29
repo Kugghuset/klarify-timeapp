@@ -17,6 +17,7 @@ BEGIN
     , [price] Float NULL
     , [sum] Float NULL
     , [employeeId] BigInt NULL
+    , [categoryId] BigInt NULL
     , [timeAppEmployeeId] BigInt NULL
     , [isUpdated] Bit DEFAULT 1 NULL
     , [dateCreated] DateTime2 DEFAULT GETUTCDATE() NULL
@@ -24,67 +25,76 @@ BEGIN
     , [isDisabled] Bit DEFAULT 0 NULL -- Used for determining existance
   )
 END
-
+ELSE
+BEGIN
+  IF NOT EXISTS(SELECT * FROM sys.columns
+                WHERE Name = N'categoryId'
+                  AND Object_ID = Object_ID(N'TimeAppReport'))
+  BEGIN
+    ALTER TABLE [dbo].[TimeAppReport]
+    ADD [categoryId] BigInt NULL
+  END
+END
 /********************************************************************
- * Ensures FactKugghuset is up to par with what the system requires.
+ * Ensures _FactKugghuset is up to par with what the system requires.
  ********************************************************************/
 
 /**
- * Ensure [TimeAppReportId] exists on FactKugghuset
+ * Ensure [TimeAppReportId] exists on _FactKugghuset
  * by adding it if it doesn't exist.
  */
 IF NOT EXISTS(SELECT * FROM sys.columns
               WHERE Name = N'TimeAppReportId'
-                AND Object_ID = Object_ID(N'FactKugghuset'))
+                AND Object_ID = Object_ID(N'_FactKugghuset'))
 BEGIN
-  ALTER TABLE [dbo].[FactKugghuset]
+  ALTER TABLE [dbo].[_FactKugghuset]
   ADD [TimeAppReportId] BigInt NULL
 END
 
 /**
- * Ensure [FactKugghusetID] exists on FactKugghuset
+ * Ensure [FactKugghusetId] exists on _FactKugghuset
  * by adding it if it doesn't exist.
  */
 IF NOT EXISTS(SELECT * FROM sys.columns
               WHERE Name = N'FactKugghusetID'
-                AND Object_ID = Object_ID(N'FactKugghuset'))
+                AND Object_ID = Object_ID(N'_FactKugghuset'))
 BEGIN
-  ALTER TABLE [dbo].[FactKugghuset]
-  ADD [FactKugghusetID] BigInt IDENTITY(1, 1) PRIMARY KEY NOT NULL
+  ALTER TABLE [dbo].[_FactKugghuset]
+  ADD [FactKugghusetId] BigInt IDENTITY(1, 1) PRIMARY KEY NOT NULL
 END
 
 IF EXISTS(SELECT * FROM INFORMATION_SCHEMA.COLUMNS
-          WHERE TABLE_NAME = N'FactKugghuset'
+          WHERE TABLE_NAME = N'_FactKugghuset'
             AND COLUMN_NAME = N'Customer'
             AND DATA_TYPE = N'nvarchar')
 BEGIN
-  ALTER TABLE [dbo].[FactKugghuset]
+  ALTER TABLE [dbo].[_FactKugghuset]
   ALTER COLUMN [Customer] VarChar(255)
 END
 
 IF EXISTS(SELECT * FROM INFORMATION_SCHEMA.COLUMNS
-          WHERE TABLE_NAME = N'FactKugghuset'
+          WHERE TABLE_NAME = N'_FactKugghuset'
             AND COLUMN_NAME = N'Project'
             AND DATA_TYPE = N'nvarchar')
 BEGIN
-  ALTER TABLE [dbo].[FactKugghuset]
+  ALTER TABLE [dbo].[_FactKugghuset]
   ALTER COLUMN [Project] VarChar(255)
 END
 
 IF EXISTS(SELECT * FROM INFORMATION_SCHEMA.COLUMNS
-          WHERE TABLE_NAME = N'FactKugghuset'
+          WHERE TABLE_NAME = N'_FactKugghuset'
             AND COLUMN_NAME = N'Code'
             AND DATA_TYPE = N'nvarchar')
 BEGIN
-  ALTER TABLE [dbo].[FactKugghuset]
+  ALTER TABLE [dbo].[_FactKugghuset]
   ALTER COLUMN [Code] VarChar(255)
 END
 
 IF EXISTS(SELECT * FROM INFORMATION_SCHEMA.COLUMNS
-          WHERE TABLE_NAME = N'FactKugghuset'
+          WHERE TABLE_NAME = N'_FactKugghuset'
             AND COLUMN_NAME = N'Comment'
             AND DATA_TYPE = N'nvarchar')
 BEGIN
-  ALTER TABLE [dbo].[FactKugghuset]
+  ALTER TABLE [dbo].[_FactKugghuset]
   ALTER COLUMN [Comment] VarChar(MAX)
 END

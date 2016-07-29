@@ -1,5 +1,5 @@
 /*
-Merges data into [dbo].[FactKugghuset]
+Merges data into [dbo].[_FactKugghuset]
 */
 
 SET XACT_ABORT ON
@@ -45,6 +45,7 @@ SELECT
   , [TAR].[price]
   , [TAR].[sum]
   , [TAR].[employeeId]
+  , [TAR].[categoryId]
   , [timeAppReportId]
 INTO [dbo].[__TimeAppReport__]
 FROM (
@@ -65,7 +66,7 @@ ELSE
 BEGIN
 
   /**
-   * Create a temp table  for FactKugghuset
+   * Create a temp table for _FactKugghuset
    * containing a RowNumber column to reduce the risk of dupliate
    * rows to zero (hopefully).
    */
@@ -82,8 +83,8 @@ BEGIN
         , [Total Amount]
         , [Discount]
         , [Adjusted Amount]
-        , [CategoryID]
         , [EmployeeID]
+        , [CategoryID]
         ORDER BY [Date] ASC, [EmployeeId] ASC
       ) AS [RowNumber]
     , [Date]
@@ -96,9 +97,9 @@ BEGIN
     , [Total Amount]
     , [Discount]
     , [Adjusted Amount]
-    , [CategoryID]
     , [EmployeeID]
-    , [FactKugghusetID]
+    , [CategoryID]
+    , [FactKugghusetId]
     , CASE
         WHEN [TimeAppReportId] IS NOT NULL THEN [TimeAppReportId]
         ELSE  (
@@ -106,17 +107,17 @@ BEGIN
           FROM [dbo].[__TimeAppReport__] AS [TAR]
           WHERE 1=1
             AND [timeAppReportId] NOT IN (SELECT [TimeAppReportId]
-                                          FROM [dbo].[FactKugghuset]
+                                          FROM [dbo].[_FactKugghuset]
                                           WHERE [TimeAppReportId] IS NOT NULL)
-            AND [dbo].[FactKugghuset].[Date] = [TAR].[date]
-            AND [dbo].[FactKugghuset].[Customer] = [TAR].[customerName]
-            AND [dbo].[FactKugghuset].[Project] = [TAR].[projectName]
-            AND [dbo].[FactKugghuset].[Hours] = [TAR].[quantity]
-            AND [dbo].[FactKugghuset].[EmployeeId] = [TAR].[EmployeeId]
+            AND [dbo].[_FactKugghuset].[Date] = [TAR].[date]
+            AND [dbo].[_FactKugghuset].[Customer] = [TAR].[customerName]
+            AND [dbo].[_FactKugghuset].[Project] = [TAR].[projectName]
+            AND [dbo].[_FactKugghuset].[Hours] = [TAR].[quantity]
+            AND [dbo].[_FactKugghuset].[EmployeeId] = [TAR].[EmployeeId]
         )
       END AS [TimeAppReportId]
   INTO [dbo].[__FactKugghuset__]
-  FROM [dbo].[FactKugghuset]
+  FROM [dbo].[_FactKugghuset]
 
   /********************************************
    * Perform the merge between the temp tables
@@ -135,18 +136,18 @@ BEGIN
    * When there is a match but some fields have changed,
    * update the values
    */
-  WHEN MATCHED
-    AND [Target].[RowNumber] = [Source].[RowNumber]
-    AND (
+  WHEN MATCHED AND (
         ([Target].[Comment] IS NULL OR [Target].[Comment] != [Source].[comment])
       OR [Target].[Code] != [Source].[code]
       OR [Target].[Hourly Price] != [Source].[price]
+      OR ISNULL([Target].[CategoryID], -1) != ISNULL([Source].[categoryId], -1)
   ) THEN UPDATE SET
       [Target].[Comment] = [Source].[comment]
     , [Target].[Code] = [Source].[code]
     , [Target].[Hourly Price] = [Source].[price]
     , [Target].[Adjusted Amount] = [Source].[adjustedAmount]
     , [Target].[Discount] = [Source].[discount]
+    , [Target].[CategoryId] = [Source].[categoryId]
 
   /**
    * When there isn't a match,
@@ -165,6 +166,7 @@ BEGIN
       , [Discount]
       , [Adjusted Amount]
       , [EmployeeID]
+      , [CategoryID]
       , [TimeAppReportId]
     ) VALUES (
         [Source].[date]
@@ -178,6 +180,7 @@ BEGIN
       , [Source].[discount]
       , [Source].[adjustedAmount]
       , [Source].[employeeId]
+      , [Source].[categoryId]
       , [Source].[timeAppReportId]
     )
   ; -- This semicolon is more important than life.
@@ -185,10 +188,10 @@ BEGIN
   /**
    * Perform the merge into temp tables
    */
-  MERGE [dbo].[FactKugghuset] AS [Target]
+  MERGE [dbo].[_FactKugghuset] AS [Target]
   USING [dbo].[__FactKugghuset__] AS [Source]
 
-  ON [Target].[FactKugghusetID] = [Source].[FactKugghusetID]
+  ON [Target].[FactKugghusetId] = [Source].[FactKugghusetId]
 
   WHEN MATCHED
     AND (
@@ -196,13 +199,15 @@ BEGIN
       OR [Target].[Code] != [Source].[Code]
       OR [Target].[Hourly Price] != [Source].[Hourly Price]
       OR [Target].[TimeAppReportId] IS NULL
-  ) THEN UPDATE SET
-      [Target].[Comment] = [Source].[Comment]
-    , [Target].[Code] = [Source].[Code]
-    , [Target].[Hourly Price] = [Source].[Hourly Price]
-    , [Target].[Adjusted Amount] = [Source].[Adjusted Amount]
-    , [Target].[Discount] = [Source].[Discount]
-    , [Target].[TimeAppReportId] = [Source].[TimeAppReportId]
+      OR ISNULL([Target].[CategoryID], -1) != ISNULL([Source].[CategoryID], -1)
+    ) THEN UPDATE SET
+        [Target].[Comment] = [Source].[Comment]
+      , [Target].[Code] = [Source].[Code]
+      , [Target].[Hourly Price] = [Source].[Hourly Price]
+      , [Target].[Adjusted Amount] = [Source].[Adjusted Amount]
+      , [Target].[Discount] = [Source].[Discount]
+      , [Target].[TimeAppReportId] = [Source].[TimeAppReportId]
+      , [Target].[CategoryID] = [Source].[CategoryID]
 
   WHEN NOT MATCHED BY TARGET
     THEN INSERT (
@@ -217,6 +222,7 @@ BEGIN
       , [Discount]
       , [Adjusted Amount]
       , [EmployeeID]
+      , [CategoryID]
       , [TimeAppReportId]
     ) VALUES (
         [Source].[Date]
@@ -230,6 +236,7 @@ BEGIN
       , [Source].[Discount]
       , [Source].[Adjusted Amount]
       , [Source].[EmployeeID]
+      , [Source].[CategoryID]
       , [Source].[TimeAppReportId]
     )
   ; -- This semicolon is also more important than life.

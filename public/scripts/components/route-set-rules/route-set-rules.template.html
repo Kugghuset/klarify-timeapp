@@ -1,0 +1,30 @@
+<section class="col-1-1">
+  <su-card class="__route-set-rules fill" title="Set rules">
+
+    <table class="__su-table">
+      <thead>
+        <th colspan="2">Date</th>
+        <th colspan="3">Customer</th>
+        <th colspan="3">Project</th>
+        <th colspan="2">Employee</th>
+        <th colspan="4">Suggested category</th>
+        <th colspan="2">Probability</th>
+        <th colspan="4">User set</th>
+        <th colspan="2">&nbsp;</th>
+      </thead>
+      <tbody>
+        <tr v-for="report in reports">
+          <td colspan="2">{{ report.date | date 'YYYY-MM-DD' }}</td>
+          <td colspan="3">{{ report.customerName }}</td>
+          <td colspan="3">{{ report.projectName }}</td>
+          <td colspan="2">{{ report.employeeName }}</td>
+          <td colspan="4">{{ report.timeAppCategory.categoryName }}</td>
+          <td colspan="2">{{ report.timeAppCategory.probabilityPercentage || 0 }} %</td>
+          <td colspan="4"><su-select :options="categories" :value.sync="report.givenCategoryId"></su-select></td>
+          <td colspan="2"><su-button class="fill" :clicked="saveRule" :params="[report]" color="blue">Save</su-button></td>
+        </tr>
+      </tbody>
+    </table>
+
+  </su-card>
+</section>

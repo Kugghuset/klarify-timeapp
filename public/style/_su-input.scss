@@ -1,0 +1,80 @@
+.__su-input {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+
+  label {
+    position: relative;
+
+    & > * {
+      font-size: $font-size-s;
+    }
+
+    &:hover {
+      input {
+        box-shadow: 0px 2px 5px rgba($color: $black, $alpha: 0.1);
+      }
+    }
+
+    input {
+      padding: $size-s;
+      position: relative;
+      border: thin none;
+      outline: none;
+      background-color: $white;
+      color: $black;
+      width: 100%;
+      transition: background-color $animation-speed, box-shadow $animation-speed;
+      @include su-border-radius;
+
+      &:focus {
+        box-shadow: 0px 2px 5px rgba($color: $black, $alpha: 0.2);
+      }
+    }
+
+    span {
+      position: absolute;
+      left: 0;
+      top: 50%;
+      margin-left: $size-s;
+      margin-top: -#{$size-xs / 3};
+      transform-origin: top left;
+      transform: translate3d(0, -50%, 0) scale(1);
+      transition: transform $animation-speed;
+      width: 100%;
+    }
+
+    span.has-value,
+    input:focus + span {
+      transform: translate3d(0, calc(-.5em - 50%), 0) scale(0.6);
+    }
+
+    &.big-text {
+      & > * {
+        font-size: $font-size-m;
+      }
+      input {
+        padding: $size-ms;
+      }
+      span {
+        margin-left: $size-ms;
+        margin-top: -#{$size-ms / 2};
+      }
+      span.has-value,
+      input:focus + span {
+        transform: translate3d(0, -#{$size-ms}, 0) scale(0.6);
+      }
+    }
+
+    &.center-text {
+      span, input {
+        text-align: center;
+        transform-origin: top center;
+      }
+      span {
+        margin-left: 0;
+      }
+    }
+  }
+
+}

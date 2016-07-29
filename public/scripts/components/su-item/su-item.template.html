@@ -1,0 +1,12 @@
+<div class="__su-item" :class="{ 'clickable': _clickable }" @click="click">
+  <div class="item-header">
+    <dl>
+      <dt :class="{ 'su-numbered': numbered }">{{ headerTitle }}</dt>
+      <dd>{{ headerValue }}</dd>
+    </dl>
+    <i v-if="_canRemove" class="su-icon-remove remove" @click.stop="remove"></i>
+  </div>
+  <div class="item-body">
+    <slot></slot>
+  </div>
+</div>

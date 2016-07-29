@@ -1,0 +1,94 @@
+.su-icon-add {
+  display: block;
+  position: relative;
+  content: '';
+  font-size: 200%;
+  border: 2px solid $white;
+  height: 1em;
+  width: 1em;
+  border-radius: 50%;
+  margin: 0 auto;
+
+  &::before {
+    display: block;
+    content: '';
+    position: absolute;
+    background-color: $white;
+    height: 1em;
+    width: 2px;
+    top: 50%;
+    left: 50%;
+    transform: translate3d(-50%, -50%, 0) scale(0.6);
+  }
+  &::after {
+    display: block;
+    content: '';
+    position: absolute;
+    background-color: $white;
+    width: 1em;
+    height: 2px;
+    top: 50%;
+    left: 50%;
+    transform: translate3d(-50%, -50%, 0) scale(0.6);
+  }
+}
+
+.su-icon-remove {
+  display: block;
+  position: relative;
+  content: '';
+  font-size: inherit;
+  height: 1em;
+  width: 1em;
+  margin: 0 auto;
+  transition: transform $animation-speed;
+  cursor: pointer;
+
+  &::before {
+    display: block;
+    content: '';
+    position: absolute;
+    background-color: $white;
+    height: 1em;
+    width: 2px;
+    top: 50%;
+    left: 50%;
+    transform: translate3d(-50%, -50%, 0) scale(0.6) rotate(45deg);
+    transition: background-color $animation-speed;
+  }
+  &::after {
+    display: block;
+    content: '';
+    position: absolute;
+    background-color: $white;
+    width: 1em;
+    height: 2px;
+    top: 50%;
+    left: 50%;
+    transform: translate3d(-50%, -50%, 0) scale(0.6) rotate(45deg);
+    transition: background-color $animation-speed;
+  }
+
+  &:hover {
+    transform: scale(1.2);
+  }
+  &:active {
+    transform: scale(1.4);
+  }
+}
+
+.su-icon-chevron {
+  &::before {
+    border-style: solid;
+    border-width: 0.125em 0.125em 0 0;
+    content: '';
+    display: inline-block;
+    height: 0.45em;
+    left: 0.15em;
+    position: relative;
+    top: 0.15em;
+    transform: rotate(-135deg);
+    vertical-align: top;
+    width: 0.45em;
+  }
+}

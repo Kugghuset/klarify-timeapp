@@ -15,6 +15,7 @@ SELECT
   , [price]
   , [sum]
   , [employeeId]
+  , [categoryId]
   , [timeAppEmployeeId]
   , [isUpdated]
   , [dateCreated]
