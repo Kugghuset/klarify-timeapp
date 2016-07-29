@@ -5,10 +5,9 @@ Finds all timeAppCategorys non-disabled timeAppCategorys
 SELECT
     [timeAppCategoryId]
   , [categoryId]
-  , [isGiven]
-  , [totalValue]
+  , [sum]
+  , [probabilityPercentage]
   , [timeAppReportId]
-  , [timeAppCategoryBlobId]
   , [dateCreated]
   , [dateUpdated]
   , [isDisabled]

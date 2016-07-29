@@ -6,10 +6,9 @@ Updates a timeAppCategory to db and selects it.
 UPDATE [dbo].[TimeAppCategory]
 SET
     [categoryId] = @categoryId§
-  , [isGiven] = @isGiven
-  , [totalValue] = @totalValue
+  , [sum] = @sum
+  , [probabilityPercentage] = @probabilityPercentage
   , [timeAppReportId] = @timeAppReportId
-  , [timeAppCategoryBlobId] = @timeAppCategoryBlobId
   , [dateUpdated] = GETUTCDATE()
 WHERE [timeAppCategoryId] = @timeAppCategoryId
 
@@ -17,10 +16,9 @@ WHERE [timeAppCategoryId] = @timeAppCategoryId
 SELECT
     [timeAppCategoryId]
   , [categoryId]
-  , [isGiven]
-  , [totalValue]
+  , [sum]
+  , [probabilityPercentage]
   , [timeAppReportId]
-  , [timeAppCategoryBlobId]
   , [dateCreated]
   , [dateUpdated]
   , [isDisabled]

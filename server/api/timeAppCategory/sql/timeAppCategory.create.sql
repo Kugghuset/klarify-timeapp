@@ -7,17 +7,15 @@ DECLARE @id BigInt
 -- Insert the timeAppCategory
 INSERT INTO [dbo].[TimeAppCategory] (
     [categoryId]
-  , [isGiven]
-  , [totalValue]
+  , [sum]
+  , [probabilityPercentage]
   , [timeAppReportId]
-  , [timeAppCategoryBlobId]
 )
 VALUES (
     @categoryId
-  , @isGiven
-  , @totalValue
+  , @sum
+  , @probabilityPercentage
   , @timeAppReportId
-  , @timeAppCategoryBlobId
 )
 
 SELECT @id = SCOPE_IDENTITY()
@@ -26,10 +24,9 @@ SELECT @id = SCOPE_IDENTITY()
 SELECT
     [timeAppCategoryId]
   , [categoryId]
-  , [isGiven]
-  , [totalValue]
+  , [sum]
+  , [probabilityPercentage]
   , [timeAppReportId]
-  , [timeAppCategoryBlobId]
   , [dateCreated]
   , [dateUpdated]
   , [isDisabled]

@@ -21,21 +21,21 @@ const getParams = (timeAppCategory = {}) => {
       type: sql.BigInt,
       val: timeAppCategory.timeAppCategoryId,
     },
-    isGiven: {
-      type: sql.Bit,
-      val: timeAppCategory.isGiven,
+    categoryId: {
+      type: sql.BigInt,
+      val: timeAppCategory.categoryId,
     },
-    totalValue: {
+    sum: {
       type: sql.Int,
-      val: timeAppCategory.totalValue,
+      val: timeAppCategory.sum,
+    },
+    probabilityPercentage: {
+      type: sql.SmallInt,
+      val: timeAppCategory.probabilityPercentage,
     },
     timeAppReportId: {
       type: sql.BigInt,
       val: timeAppCategory.timeAppReportId,
-    },
-    timeAppCategoryBlobId: {
-      type: sql.BigInt,
-      val: timeAppCategory.timeAppCategoryBlobId,
     },
   };
 };

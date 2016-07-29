@@ -5,10 +5,9 @@ Finds the timeAppCategory at @timeAppCategoryId
 SELECT
     [timeAppCategoryId]
   , [categoryId]
-  , [isGiven]
-  , [totalValue]
+  , [sum]
+  , [probabilityPercentage]
   , [timeAppReportId]
-  , [timeAppCategoryBlobId]
   , [dateCreated]
   , [dateUpdated]
   , [isDisabled]

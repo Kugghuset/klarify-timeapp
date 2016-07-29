@@ -133,6 +133,18 @@ export function categorizeReports(reports) {
   });
 }
 
+/**
+ * Merges timeAppCategories and updates categoryIds of reports.
+ *
+ * @param {{ sum: Number, categoryId: Number, customerName: String, projectName: String, code: String, employeeId:Number, timeAppReportId: Number, employeeName: String, probabilityPercentage: Number }[]} catReports
+ */
+export function storeCategorizedReports(catReports) {
+  return new Promise((resolve, reject) => {
+    // Do something
+    resolve();
+  });
+}
+
 export default {
   categorizeUpdated: categorizeUpdated,
   categorizeReports: categorizeReports,
