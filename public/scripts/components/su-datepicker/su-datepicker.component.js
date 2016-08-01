@@ -65,9 +65,13 @@ const SuDatepickerComponent = Vue.extend({
           : undefined;
       },
       set: function (val) {
-        this.date = !!val && moment(new Date(val)).isValid()
+        const _date = !!val && moment(new Date(val)).isValid()
           ? new Date(val)
           : undefined;
+
+        if (!moment(this.date).isSame(_date, 'day')) {
+          this.date = _date;
+        }
       },
     },
   },

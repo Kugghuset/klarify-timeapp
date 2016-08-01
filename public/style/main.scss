@@ -31,6 +31,7 @@
 @import 'su-hamburger';
 @import 'su-range';
 @import 'docs';
+@import 'rules';
 
 #app-mount {
   position: absolute;
@@ -82,6 +83,10 @@ a {
   &, * {
     font-size: $font-size-s;
   }
+}
+
+.padded-top {
+  padding-top: #{$size-xs * 2};
 }
 
 .rubber-scroll {

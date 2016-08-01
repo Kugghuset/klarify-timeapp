@@ -1,30 +1,49 @@
-<section class="col-1-1">
-  <su-card class="__route-set-rules fill" title="Set rules" :no-padding="true">
+<div class="padded-top __route-su-set-rules">
+  <section class="col-1-1">
+    <su-card title="Apply filters" class="fill" :padded="true">
+      <h3>Show reports between</h3>
+      <div class="grid grid-no-padding">
+        <div class="col-1-2">
+          <su-datepicker title="Date from" :max-date="dateTo" :date.sync="dateFrom"></su-datepicker>
+        </div>
+        <div class="col-1-2">
+          <su-datepicker title="Date to" :min-date="dateFrom" :date.sync="dateTo"></su-datepicker>
+        </div>
+      </div>
+    </su-card>
+  </section>
+  <section class="col-1-1" v-if="!!_reports.length">
+    <h3>Page {{ currentPage + 1 }} of {{ getMaxIndex(_reports) + 1 }}</h3>
+    <su-range :value.sync="currentPage" :min="0" :max="getMaxIndex(_reports, pageSize)"></su-range>
+  </section>
+  <section class="col-1-1" v-if="!!_reports.length">
+    <su-card class="__route-set-rules fill" title="Set rules" :no-padding="true">
 
-    <table class="__su-table">
-      <thead>
-        <th colspan="2">Date</th>
-        <th colspan="3">Customer</th>
-        <th colspan="3">Project</th>
-        <th colspan="2">Employee</th>
-        <th colspan="4">Suggested category</th>
-        <th colspan="2">Probability</th>
-        <th colspan="4">User set</th>
-        <th colspan="2">&nbsp;</th>
-      </thead>
-      <tbody>
-        <tr v-for="report in reports">
-          <td colspan="2">{{ report.date | date 'YYYY-MM-DD' }}</td>
-          <td colspan="3">{{ report.customerName }}</td>
-          <td colspan="3">{{ report.projectName }}</td>
-          <td colspan="2">{{ report.employeeName }}</td>
-          <td colspan="4">{{ report.timeAppCategory.categoryName }}</td>
-          <td colspan="2">{{ report.timeAppCategory.probabilityPercentage || 0 }} %</td>
-          <td colspan="4"><su-select :options="categories" :value.sync="report.givenCategoryId"></su-select></td>
-          <td colspan="2"><su-button class="fill" :clicked="saveRule" :params="[report]" color="blue">Save</su-button></td>
-        </tr>
-      </tbody>
-    </table>
+      <table class="__su-table">
+        <thead>
+          <th class="clickable" :class="{ 'active': predicate === 'date' }" @click="setOrder('date')" colspan="2">Date</th>
+          <th class="clickable" :class="{ 'active': predicate === 'customerName' }" @click="setOrder('customerName')" colspan="3">Customer</th>
+          <th class="clickable" :class="{ 'active': predicate === 'projectName' }" @click="setOrder('projectName')" colspan="3">Project</th>
+          <th class="clickable" :class="{ 'active': predicate === 'employeeName' }" @click="setOrder('employeeName')" colspan="2">Employee</th>
+          <th class="clickable" :class="{ 'active': predicate === 'timeAppCategory.categoryName' }" @click="setOrder('timeAppCategory.categoryName')" colspan="4">Suggested category</th>
+          <th class="clickable" :class="{ 'active': predicate === 'timeAppCategory.probabilityPercentage' }" @click="setOrder('timeAppCategory.probabilityPercentage')" colspan="2">Probability</th>
+          <th colspan="4">User set</th>
+          <th colspan="2">&nbsp;</th>
+        </thead>
+        <tbody>
+          <tr v-for="report in getPage(_reports, currentPage, pageSize)">
+            <td colspan="2">{{ report.date | date 'YYYY-MM-DD' }}</td>
+            <td colspan="3">{{ report.customerName }}</td>
+            <td colspan="3">{{ report.projectName }}</td>
+            <td colspan="2">{{ report.employeeName }}</td>
+            <td colspan="4">{{ report.timeAppCategory.categoryName }}</td>
+            <td colspan="2">{{ report.timeAppCategory.probabilityPercentage || 0 }} %</td>
+            <td colspan="4"><su-select :options="categories" :value.sync="report.givenCategoryId"></su-select></td>
+            <td colspan="2"><su-button :is-loading="isLoading" :disabled="typeof report.givenCategoryId === 'undefined'" class="fill" :clicked="saveRule" :params="[report]" color="blue">Save</su-button></td>
+          </tr>
+        </tbody>
+      </table>
 
-  </su-card>
-</section>
+    </su-card>
+  </section>
+</div>

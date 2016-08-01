@@ -1,4 +1,4 @@
-SELECT TOP 10
+SELECT
     [TAR].[timeAppReportId]
   , [TAR].[type]
   , [TAR].[date]
