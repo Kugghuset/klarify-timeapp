@@ -89,6 +89,10 @@ a {
   padding-top: #{$size-xs * 2};
 }
 
+.padded-bottom-thick {
+  padding-bottom: #{$size-xxl * 6};
+}
+
 .rubber-scroll {
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;

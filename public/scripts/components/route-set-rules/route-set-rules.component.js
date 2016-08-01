@@ -55,7 +55,9 @@ const RouteSetRulesComponent = Vue.extend({
       this.isLoading = true;
       const _report = JSON.parse(JSON.stringify(report));
 
-      http.put(`api/time-app-categories/set-rule`, _report)
+      const data = { dateFrom: this.dateFrom, dateTo: this.dateTo, reportRule: _report };
+
+      http.put(`api/time-app-categories/set-rule`, data)
       .then(function (reports) {
         this.reports = reports;
         this.isLoading = false;
@@ -64,10 +66,10 @@ const RouteSetRulesComponent = Vue.extend({
       });
     },
     getPage: function (reports = [], pageIndex = 0, size = 50) {
-      return _.map(reports).slice(pageIndex * size, pageIndex * size + size);
+      return reports.slice(pageIndex * size, pageIndex * size + size);
     },
-    getMaxIndex: function (reports, size = 50) {
-      return Math.floor(_.map(reports).length / size);
+    getMaxIndex: function (reports = [], size = 50) {
+      return Math.floor(reports.length / size);
     },
     setOrder: function (predicate) {
       if (this.predicate !== predicate) {

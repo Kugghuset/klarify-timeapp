@@ -2,7 +2,7 @@
   <header v-if="_hasTitle">
     <h2>{{ title }}</h2>
   </header>
-  <div class="content" :class="{ 'no-padding': noPadding, 'padded': padded }">
+  <div class="content show-overflow" :class="{ 'no-padding': noPadding, 'padded': padded }">
     <slot name="above"></slot>
     <slot></slot>
     <slot name="under"></slot>

@@ -271,12 +271,30 @@ export function findUpdated() {
 }
 
 /**
+ * @param {{ dateTo: Date, dateFrom: Date }} dates
  * @return {Promise<{}[]>}
  */
-export function findCategorized() {
+export function findCategorized(dates = {}) {
   return new Promise((resolve, reject) => {
     sql.execute({
-      query: sql.fromFile('./sql/timeAppReport.findCategorized.sql'),
+      query: sql.fromFile('./sql/timeAppReport.findCategorized.sql')
+        .replace(
+          '{and_where}',
+            _.filter([
+              !dates.dateFrom ? '' : `AND [TAR].[date] >= @dateFrom`,
+              !dates.dateTo ? '' : `AND [TAR].[date] <= @dateTo`,
+            ]).join(' ')
+        ),
+        params: {
+          dateFrom: {
+            type: sql.Date,
+            val: dates.dateFrom,
+          },
+          dateTo: {
+            type: sql.Date,
+            val: dates.dateTo,
+          },
+        },
     })
     .then(data => resolve(utils.objectify(data)))
     .catch(reject);

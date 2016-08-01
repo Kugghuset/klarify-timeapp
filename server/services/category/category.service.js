@@ -184,20 +184,22 @@ export function createRule(reportRule) {
 /**
  * Creates the rule and updates all rules with less than 100 % probabilityPercentage.
  *
- * @param {{ timeAppReportId: Number, type: String, code: String, customerName: String, date: Date, employeeId: Number, employeeName: String, projectName: String, givenCategoryId: Number, timeAppCategory: { categoryId: Number, categoryName: String, probabilityPercentage: Number, timeAppCategoryId: Number } }} reportRule
+ * @param {{ dateTo: Date, dateFrom: Date, reportRule: { timeAppReportId: Number, type: String, code: String, customerName: String, date: Date, employeeId: Number, employeeName: String, projectName: String, givenCategoryId: Number, timeAppCategory: { categoryId: Number, categoryName: String, probabilityPercentage: Number, timeAppCategoryId: Number } } }} paramData
  * @return {Promise}
  */
-export function createRuleAndCategorize(reportRule) {
+export function createRuleAndCategorize(paramData = {}) {
+  const { reportRule, dateFrom, dateTo } = paramData;
+
   // First create the rule
   return createRule(reportRule)
   // Find all categorized reports with less than 100 % probabilityPercentage
   .then(data => utils.logResolve(data, 'Finding categorized reports without complete certainty', 'info'))
-  .then(TimeAppReport.findCategorized)
+  .then(data => TimeAppReport.findCategorized({ dateFrom, dateTo }))
   .then(data => utils.logResolve(data, 'Successfully found categorized reports without complete certainty', 'info', { reportsLength: data.length }))
   // Categorize and store the reports
   .then(timeAppReports => categorizeAndStore(timeAppReports))
   //  Find all categorized reports with less than 100 % probabilityPercentage again for resolving.
-  .then(TimeAppReport.findCategorized)
+  .then(data => TimeAppReport.findCategorized())
   .catch(Promise.reject);
 }
 

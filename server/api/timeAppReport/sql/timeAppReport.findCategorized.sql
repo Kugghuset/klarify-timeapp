@@ -23,3 +23,4 @@ ON [C].[CategoryId] = [TAC].[categoryId]
 WHERE [TAR].[isDisabled] = 0
   AND [TAR].[type] = 'Redovisning'
   AND [TAC].[probabilityPercentage] < 100
+  {and_where}
