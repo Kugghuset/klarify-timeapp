@@ -251,6 +251,7 @@ export function mergeToMaster() {
       query: sql.fromFile('./sql/timeAppReport.mergeToMaster.sql')
     })
     .then(data => utils.logResolve(data, `Completed merging TimeAppReportS into Fact table`, 'info'))
+    .then(resolve)
     .catch(reject);
   });
 }

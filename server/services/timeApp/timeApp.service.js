@@ -365,11 +365,17 @@ const _dates = {
 // .then(insertData)
 // .catch(err => utils.log(err, 'error'));
 
+export function loginAndInsert(dateFrom, dateTo) {
+  return login(config.timeApp.email, config.timeApp.password)
+  .then(context => generateReport(_.assign({}, context, _dates)))
+  .then(insertData);
+}
 
 export default {
   baseUrl: baseUrl,
   reportKeysEnum: reportKeysEnum,
   login: login,
   generateReport: generateReport,
-  structureReport: insertData,
+  insertData: insertData,
+  loginAndInsert: loginAndInsert,
 }
