@@ -232,7 +232,7 @@ export function mergeMany(timeAppReports) {
         query: sql.fromFile('./sql/timeAppReport.mergeTemp.sql')
           .replace(/\{table_name\}/ig, _tableName)
     }))
-    .then(data => utils.logPromise(data, 'Merged timeAppReports', 'info', { tableName: _tableName }))
+    .then(data => utils.logResolve(data, 'Merged timeAppReports', 'info', { tableName: _tableName }))
     .then(resolve)
     .catch(reject);
   });
@@ -250,7 +250,7 @@ export function mergeToMaster() {
     sql.execute({
       query: sql.fromFile('./sql/timeAppReport.mergeToMaster.sql')
     })
-    .then(data => utils.logPromise(data, `Completed merging TimeAppReportS into Fact table`, 'info'))
+    .then(data => utils.logResolve(data, `Completed merging TimeAppReportS into Fact table`, 'info'))
     .catch(reject);
   });
 }

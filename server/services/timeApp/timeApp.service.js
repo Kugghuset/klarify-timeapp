@@ -344,7 +344,7 @@ export function insertData(context) {
     .then(data => category.categorizeAndStore())
     // Merge updated timeReports into actual live table
     .then(TimeAppReport.mergeToMaster)
-    .then(data => utils.logPromise(data, 'Completed inserting data.'))
+    .then(data => utils.logResolve(data, 'Completed inserting data.'))
     .catch(err => {
       utils.log('Failed to insert data', 'info')
       utils.log(err, 'error');

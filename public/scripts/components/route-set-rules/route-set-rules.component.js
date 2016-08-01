@@ -43,9 +43,12 @@ const RouteSetRulesComponent = Vue.extend({
       console.log(_report);
 
       http.put(`api/time-app-categories/set-rule`, _report)
-      .then(data => {
-        console.log(data);
-      })
+      .then(function (reports) {
+        console.log(reports);
+        this.reports = reports;
+
+        console.log(this);
+      }.bind(this))
       .catch(err => {
         console.log(err);
       });

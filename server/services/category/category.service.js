@@ -149,6 +149,7 @@ export function storeCategorizedReports(catReports) {
 
 /**
  * @param {{ type: String, employeeName: String, date: Date, customerName: String, projectName: String, comment: String, code: String, quantity: Number, price: Number, sum: Number, categoryId: Number, isUpdated: Boolean }[]} [reports]
+ * @return {Promise}
  */
 export function categorizeAndStore(reports) {
   return (
@@ -161,9 +162,50 @@ export function categorizeAndStore(reports) {
   .catch(Promise.reject);
 }
 
+/**
+ * @param {{ timeAppReportId: Number, type: String, code: String, customerName: String, date: Date, employeeId: Number, employeeName: String, projectName: String, givenCategoryId: Number, timeAppCategory: { categoryId: Number, categoryName: String, probabilityPercentage: Number, timeAppCategoryId: Number } }} reportRule
+ * @return {Promise}
+ */
+export function createRule(reportRule) {
+  // Creat the rule from the passed in object.
+  const rule = _.assign(
+    {},
+    _.pick(reportRule, ['timeAppReportId', 'code', 'customerName', 'projectName', 'employeeId', 'employeeName']),
+    { categoryId: reportRule.givenCategoryId, }
+  );
+
+  utils.log('Creating rule', 'info', rule);
+
+  return TimeAppCategoryRule.create(rule)
+  .then(_rule => utils.logResolve(_rule,'Successfully created rule', 'info', _rule))
+  .catch(err => utils.logReject(err, 'Failed to create rule', 'error', { err: err, rule: rule }));
+}
+
+/**
+ * Creates the rule and updates all rules with less than 100 % probabilityPercentage.
+ *
+ * @param {{ timeAppReportId: Number, type: String, code: String, customerName: String, date: Date, employeeId: Number, employeeName: String, projectName: String, givenCategoryId: Number, timeAppCategory: { categoryId: Number, categoryName: String, probabilityPercentage: Number, timeAppCategoryId: Number } }} reportRule
+ * @return {Promise}
+ */
+export function createRuleAndCategorize(reportRule) {
+  // First create the rule
+  return createRule(reportRule)
+  // Find all categorized reports with less than 100 % probabilityPercentage
+  .then(data => utils.logResolve(data, 'Finding categorized reports without complete certainty', 'info'))
+  .then(TimeAppReport.findCategorized)
+  .then(data => utils.logResolve(data, 'Successfully found categorized reports without complete certainty', 'info', { reportsLength: data.length }))
+  // Categorize and store the reports
+  .then(timeAppReports => categorizeAndStore(timeAppReports))
+  //  Find all categorized reports with less than 100 % probabilityPercentage again for resolving.
+  .then(TimeAppReport.findCategorized)
+  .catch(Promise.reject);
+}
+
 export default {
   categorizeUpdated: categorizeUpdated,
   categorizeReports: categorizeReports,
   storeCategorizedReports: storeCategorizedReports,
   categorizeAndStore: categorizeAndStore,
+  createRule: createRule,
+  createRuleAndCategorize: createRuleAndCategorize,
 }

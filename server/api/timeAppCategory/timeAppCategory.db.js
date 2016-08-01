@@ -223,29 +223,8 @@ export function mergeCategorizedReports(catReports) {
     query: sql.fromFile('./sql/timeAppCategory.mergeCategorizedReports.sql')
       .replace(/\{table_name\}/ig, _tableName),
   }))
-  .then(data => utils.logPromise(data, 'Completed merge of categories into TimeAppCategory and TimeAppReport', 'info', _meta))
+  .then(data => utils.logResolve(data, 'Completed merge of categories into TimeAppCategory and TimeAppReport', 'info', _meta))
   .catch(Promise.reject);
-}
-
-/**
- * @param {{}} reportRule
- * @return {Promise<{}>}
- */
-export function setRule(reportRule) {
-  return new Promise((resolve, reject) => {
-    utils.print(reportRule)
-
-    const { timeAppCategory } = reportRule;
-
-    /**
-     * TODO:
-     * - Create or update *reportRule*
-     * - Cateogorize the report
-     * - Return the report
-     */
-
-    resolve();
-  });
 }
 
 export default {
@@ -258,5 +237,4 @@ export default {
   createMany: createMany,
   findAllDimCategories: findAllDimCategories,
   mergeCategorizedReports: mergeCategorizedReports,
-  setRule: setRule,
 }

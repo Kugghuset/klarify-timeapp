@@ -6,6 +6,7 @@ Updates a timeAppCategoryRule to db and selects it.
 UPDATE [dbo].[TimeAppCategoryRule]
 SET
     [description] = @description
+  , [timeAppReportId] = @timeAppReportId
   , [customerName] = @customerName
   , [projectName] = @projectName
   , [code] = @code
@@ -19,6 +20,7 @@ WHERE [timeAppCategoryId] = @timeAppCategoryId
 SELECT
     [timeAppCategoryId]
   , [description]
+  , [timeAppReportId]
   , [customerName]
   , [projectName]
   , [code]

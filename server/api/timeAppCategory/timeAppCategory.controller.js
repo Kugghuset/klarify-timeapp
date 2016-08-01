@@ -3,6 +3,7 @@
 import TimeAppCategory from './timeAppCategory.db';
 import config from '../../config';
 import utils from '../../utils/utils';
+import category from './../../services/category/category.service';
 
 // Initialize the timeAppCategory table
 TimeAppCategory.initialize();
@@ -81,7 +82,7 @@ export function getDimCategories(req, res) {
  * Route: PUT '/api/timeAppCategorys/set-rule'
  */
 export function setRule(req, res) {
-  TimeAppCategory.setRule(req.body)
+  category.createRuleAndCategorize(req.body)
   .then(data => res.status(200).json(data))
   .catch(err => utils.handleError(res, err));
 };

@@ -5,6 +5,7 @@
     , [Code]
     , [CategoryID]
     , [EmployeeID]
+    , [TimeAppReportId]
   FROM [dbo].[_FactKugghuset]
   WHERE [CategoryID] IS NOT NULL
     AND [EmployeeId] != 0
@@ -14,15 +15,17 @@
     , [Code]
     , [CategoryID]
     , [EmployeeID]
+    , [TimeAppReportId]
 )
 
 INSERT INTO [dbo].[TimeAppCategoryRule] (
-     [customerName]
-     ,[projectName]
-     ,[code]
-     ,[employeeName]
-     ,[employeeId]
-     ,[categoryId]
+      [customerName]
+    , [projectName]
+    , [code]
+    , [employeeName]
+    , [employeeId]
+    , [categoryId]
+    , [TimeAppReportId]
 )
 SELECT
     [C].[Customer]
@@ -31,6 +34,7 @@ SELECT
   , [E].[Employee]
   , [C].[EmployeeId]
   , [C].[CategoryId]
+  , [C].[TimeAppReportId]
 FROM cteClassifications AS [C]
 
 LEFT JOIN [dbo].[DimEmployee] AS [E]

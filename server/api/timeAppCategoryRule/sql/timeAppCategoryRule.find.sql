@@ -5,6 +5,7 @@ Finds all timeAppCategorys non-disabled timeAppCategorys
 SELECT
     [timeAppCategoryId]
   , [description]
+  , [timeAppReportId]
   , [customerName]
   , [projectName]
   , [code]

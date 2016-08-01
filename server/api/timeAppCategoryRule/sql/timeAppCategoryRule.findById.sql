@@ -5,6 +5,7 @@ Finds the timeAppCategoryRule at @timeAppCategoryId
 SELECT
     [timeAppCategoryId]
   , [description]
+  , [timeAppReportId]
   , [customerName]
   , [projectName]
   , [code]

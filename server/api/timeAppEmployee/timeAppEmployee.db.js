@@ -187,7 +187,7 @@ export function mergeMany(timeAppEmployees) {
         query: sql.fromFile('./sql/timeAppEmployee.mergeTemp.sql')
           .replace(/\{table_name\}/ig, _tableName)
     }))
-    .then(data => utils.logPromise(data, 'Merged timeAppEmployees', 'info', _meta))
+    .then(data => utils.logResolve(data, 'Merged timeAppEmployees', 'info', _meta))
     .then(resolve)
     .catch(reject);
   });

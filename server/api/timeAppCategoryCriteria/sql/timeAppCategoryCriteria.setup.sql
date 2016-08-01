@@ -8,3 +8,4 @@ VALUES
   , ('projectName', 50)
   , ('code', 5)
   , ('employeeId', 40)
+  , ('timeAppReportId', 5)

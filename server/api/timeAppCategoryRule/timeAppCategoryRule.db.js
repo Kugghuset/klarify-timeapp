@@ -25,6 +25,10 @@ const getParams = (timeAppCategoryRule = {}) => {
       type: sql.VarChar(255),
       val: timeAppCategoryRule.description,
     },
+    timeAppReportId: {
+      type: sql.BigInt,
+      val: timeAppCategoryRule.timeAppReportId,
+    },
     customerName: {
       type: sql.VarChar(255),
       val: timeAppCategoryRule.customerName,

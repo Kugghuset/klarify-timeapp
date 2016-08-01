@@ -7,6 +7,7 @@ DECLARE @id BigInt
 -- Insert the timeAppCategoryRule
 INSERT INTO [dbo].[TimeAppCategoryRule] (
     [description]
+  , [timeAppReportId]
   , [customerName]
   , [projectName]
   , [code]
@@ -16,6 +17,7 @@ INSERT INTO [dbo].[TimeAppCategoryRule] (
 )
 VALUES (
     @description
+  , @timeAppReportId
   , @customerName
   , @projectName
   , @code
@@ -30,6 +32,7 @@ SELECT @id = SCOPE_IDENTITY()
 SELECT
     [timeAppCategoryId]
   , [description]
+  , [timeAppReportId]
   , [customerName]
   , [projectName]
   , [code]

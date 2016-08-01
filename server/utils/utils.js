@@ -23,9 +23,14 @@ export const logger = _logger;
  */
 export const log = (message, level = "info", meta) => _.isUndefined(meta) ? logger.log(level, message) : logger.log(level, message, meta);
 
-export function logPromise(data, message, level, meta) {
+export function logResolve(data, message, level, meta) {
   log(message, level, meta);
   return Promise.resolve(data);
+}
+
+export function logReject(data, message, level, meta) {
+  log(message, level, meta);
+  return Promise.reject(data);
 }
 
 /**
@@ -577,7 +582,8 @@ export default {
   logger: logger,
   sql: _sql,
   log: log,
-  logPromise: logPromise,
+  logResolve: logResolve,
+  logReject: logReject,
   handleError: handleError,
   escapeRegex: escapeRegex,
   literalRegExp: literalRegExp,
