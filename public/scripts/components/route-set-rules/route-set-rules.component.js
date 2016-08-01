@@ -20,6 +20,7 @@ const RouteSetRulesComponent = Vue.extend({
       dateTo: new Date(),
       predicate: 'timeAppCategory.probabilityPercentage',
       sortOrder: 'asc',
+      filteredReports: this.setFilteredReports(),
     };
   },
   route: {
@@ -35,19 +36,42 @@ const RouteSetRulesComponent = Vue.extend({
         .then(data => { return Promise.resolve(data); })
         .then(([reports, categories]) => {
           resolve({ reports, isLoading: false, currentPage: 0, categories: _.map(categories, cat => ({ name: cat.categoryName, value: cat.categoryId })) })
+          this._reports = reports;
         });
       });
     },
   },
   computed: {
-    _reports: function () {
-      return _.chain(this.reports)
-        .orderBy(this.predicate, this.sortOrder)
-        .filter(function (report) {
-            return isSameOrBetween(report.date, this.dateFrom, this.dateTo, 'day')
-          }.bind(this)
-        )
-        .value();
+    _reports: {
+      get: function () {
+        return this.reports;
+      },
+      set: function (reports) {
+        this.reports = reports;
+        this.setFilteredReports();
+      },
+    },
+    _dateFrom: {
+      get: function () {
+        return this.dateFrom;
+      },
+      set: function (dateFrom) {
+        if (!moment(dateFrom).isSame(this.dateFrom, 'day')) {
+          this.dateFrom = dateFrom;
+          this.setFilteredReports();
+        }
+      },
+    },
+    _dateTo: {
+      get: function () {
+        return this.dateTo;
+      },
+      set: function (dateTo) {
+        if (!moment(dateTo).isSame(this.dateTo, 'day')) {
+          this.dateTo = dateTo;
+          this.setFilteredReports();
+        }
+      },
     },
   },
   methods: {
@@ -59,7 +83,7 @@ const RouteSetRulesComponent = Vue.extend({
 
       http.put(`api/time-app-categories/set-rule`, data)
       .then(function (reports) {
-        this.reports = reports;
+        this._reports = reports;
         this.isLoading = false;
       }.bind(this))
       .catch(err => {
@@ -76,11 +100,21 @@ const RouteSetRulesComponent = Vue.extend({
         this.predicate = predicate;
         this.sortOrder = 'asc';
       } else {
-        this.sortOrder = this.sortOrder === 'asc'
-          ? 'desc'
-          : 'asc';
+        this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
       }
-    }
+
+      this.setFilteredReports();
+    },
+    setFilteredReports: function () {
+      const { dateTo, dateFrom } = this;
+
+      this.filteredReports = _.chain(this._reports)
+        .orderBy(this.predicate, this.sortOrder)
+        .filter(report => isSameOrBetween(report.date, dateFrom, dateTo, 'day'))
+        .value();
+
+      return this.filteredReports;
+    },
   },
 });
 

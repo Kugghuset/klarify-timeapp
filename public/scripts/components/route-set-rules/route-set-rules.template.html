@@ -4,19 +4,19 @@
       <h3>Show reports between</h3>
       <div class="grid grid-no-padding">
         <div class="col-1-2">
-          <su-datepicker title="Date from" :max-date="dateTo" :date.sync="dateFrom"></su-datepicker>
+          <su-datepicker title="Date from" :max-date="_dateTo" :date.sync="_dateFrom"></su-datepicker>
         </div>
         <div class="col-1-2">
-          <su-datepicker title="Date to" :min-date="dateFrom" :date.sync="dateTo"></su-datepicker>
+          <su-datepicker title="Date to" :min-date="_dateFrom" :date.sync="_dateTo"></su-datepicker>
         </div>
       </div>
     </su-card>
   </section>
-  <section class="col-1-1" v-if="!!_reports.length">
-    <h3>Page {{ currentPage + 1 }} of {{ getMaxIndex(_reports) + 1 }}</h3>
-    <su-range :value.sync="currentPage" :min="0" :max="getMaxIndex(_reports, pageSize)"></su-range>
+  <section class="col-1-1" v-if="!!filteredReports.length">
+    <h3>Page {{ currentPage + 1 }} of {{ getMaxIndex(filteredReports) + 1 }}</h3>
+    <su-range :value.sync="currentPage" :min="0" :max="getMaxIndex(filteredReports, pageSize)"></su-range>
   </section>
-  <section class="col-1-1" v-if="!!_reports.length">
+  <section class="col-1-1" v-if="!!filteredReports.length">
     <su-card class="__route-set-rules fill" title="Set rules" :no-padding="true">
 
       <table class="__su-table">
@@ -31,7 +31,7 @@
           <th colspan="2">&nbsp;</th>
         </thead>
         <tbody>
-          <tr v-for="report in getPage(_reports, currentPage, pageSize)">
+          <tr v-for="report in getPage(filteredReports, currentPage, pageSize)">
             <td colspan="2">{{ report.date | date 'YYYY-MM-DD' }}</td>
             <td colspan="3">{{ report.customerName }}</td>
             <td colspan="3">{{ report.projectName }}</td>
