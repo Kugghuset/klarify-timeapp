@@ -36,65 +36,65 @@ BEGIN
   END
 END
 /********************************************************************
- * Ensures _FactKugghuset is up to par with what the system requires.
+ * Ensures FactKugghuset is up to par with what the system requires.
  ********************************************************************/
 
 /**
- * Ensure [TimeAppReportId] exists on _FactKugghuset
+ * Ensure [TimeAppReportId] exists on FactKugghuset
  * by adding it if it doesn't exist.
  */
 IF NOT EXISTS(SELECT * FROM sys.columns
               WHERE Name = N'TimeAppReportId'
-                AND Object_ID = Object_ID(N'_FactKugghuset'))
+                AND Object_ID = Object_ID(N'FactKugghuset'))
 BEGIN
-  ALTER TABLE [dbo].[_FactKugghuset]
+  ALTER TABLE [dbo].[FactKugghuset]
   ADD [TimeAppReportId] BigInt NULL
 END
 
 /**
- * Ensure [FactKugghusetId] exists on _FactKugghuset
+ * Ensure [FactKugghusetId] exists on FactKugghuset
  * by adding it if it doesn't exist.
  */
 IF NOT EXISTS(SELECT * FROM sys.columns
               WHERE Name = N'FactKugghusetID'
-                AND Object_ID = Object_ID(N'_FactKugghuset'))
+                AND Object_ID = Object_ID(N'FactKugghuset'))
 BEGIN
-  ALTER TABLE [dbo].[_FactKugghuset]
+  ALTER TABLE [dbo].[FactKugghuset]
   ADD [FactKugghusetId] BigInt IDENTITY(1, 1) PRIMARY KEY NOT NULL
 END
 
 IF EXISTS(SELECT * FROM INFORMATION_SCHEMA.COLUMNS
-          WHERE TABLE_NAME = N'_FactKugghuset'
+          WHERE TABLE_NAME = N'FactKugghuset'
             AND COLUMN_NAME = N'Customer'
             AND DATA_TYPE = N'nvarchar')
 BEGIN
-  ALTER TABLE [dbo].[_FactKugghuset]
+  ALTER TABLE [dbo].[FactKugghuset]
   ALTER COLUMN [Customer] VarChar(255)
 END
 
 IF EXISTS(SELECT * FROM INFORMATION_SCHEMA.COLUMNS
-          WHERE TABLE_NAME = N'_FactKugghuset'
+          WHERE TABLE_NAME = N'FactKugghuset'
             AND COLUMN_NAME = N'Project'
             AND DATA_TYPE = N'nvarchar')
 BEGIN
-  ALTER TABLE [dbo].[_FactKugghuset]
+  ALTER TABLE [dbo].[FactKugghuset]
   ALTER COLUMN [Project] VarChar(255)
 END
 
 IF EXISTS(SELECT * FROM INFORMATION_SCHEMA.COLUMNS
-          WHERE TABLE_NAME = N'_FactKugghuset'
+          WHERE TABLE_NAME = N'FactKugghuset'
             AND COLUMN_NAME = N'Code'
             AND DATA_TYPE = N'nvarchar')
 BEGIN
-  ALTER TABLE [dbo].[_FactKugghuset]
+  ALTER TABLE [dbo].[FactKugghuset]
   ALTER COLUMN [Code] VarChar(255)
 END
 
 IF EXISTS(SELECT * FROM INFORMATION_SCHEMA.COLUMNS
-          WHERE TABLE_NAME = N'_FactKugghuset'
+          WHERE TABLE_NAME = N'FactKugghuset'
             AND COLUMN_NAME = N'Comment'
             AND DATA_TYPE = N'nvarchar')
 BEGIN
-  ALTER TABLE [dbo].[_FactKugghuset]
+  ALTER TABLE [dbo].[FactKugghuset]
   ALTER COLUMN [Comment] VarChar(MAX)
 END

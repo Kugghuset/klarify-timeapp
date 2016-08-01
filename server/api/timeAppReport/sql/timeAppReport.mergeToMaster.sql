@@ -1,5 +1,5 @@
 /*
-Merges data into [dbo].[_FactKugghuset]
+Merges data into [dbo].[FactKugghuset]
 */
 
 SET XACT_ABORT ON
@@ -66,7 +66,7 @@ ELSE
 BEGIN
 
   /**
-   * Create a temp table for _FactKugghuset
+   * Create a temp table for FactKugghuset
    * containing a RowNumber column to reduce the risk of dupliate
    * rows to zero (hopefully).
    */
@@ -107,17 +107,17 @@ BEGIN
           FROM [dbo].[__TimeAppReport__] AS [TAR]
           WHERE 1=1
             AND [timeAppReportId] NOT IN (SELECT [TimeAppReportId]
-                                          FROM [dbo].[_FactKugghuset]
+                                          FROM [dbo].[FactKugghuset]
                                           WHERE [TimeAppReportId] IS NOT NULL)
-            AND [dbo].[_FactKugghuset].[Date] = [TAR].[date]
-            AND [dbo].[_FactKugghuset].[Customer] = [TAR].[customerName]
-            AND [dbo].[_FactKugghuset].[Project] = [TAR].[projectName]
-            AND [dbo].[_FactKugghuset].[Hours] = [TAR].[quantity]
-            AND [dbo].[_FactKugghuset].[EmployeeId] = [TAR].[EmployeeId]
+            AND [dbo].[FactKugghuset].[Date] = [TAR].[date]
+            AND [dbo].[FactKugghuset].[Customer] = [TAR].[customerName]
+            AND [dbo].[FactKugghuset].[Project] = [TAR].[projectName]
+            AND [dbo].[FactKugghuset].[Hours] = [TAR].[quantity]
+            AND [dbo].[FactKugghuset].[EmployeeId] = [TAR].[EmployeeId]
         )
       END AS [TimeAppReportId]
   INTO [dbo].[__FactKugghuset__]
-  FROM [dbo].[_FactKugghuset]
+  FROM [dbo].[FactKugghuset]
 
   /********************************************
    * Perform the merge between the temp tables
@@ -188,7 +188,7 @@ BEGIN
   /**
    * Perform the merge into temp tables
    */
-  MERGE [dbo].[_FactKugghuset] AS [Target]
+  MERGE [dbo].[FactKugghuset] AS [Target]
   USING [dbo].[__FactKugghuset__] AS [Source]
 
   ON [Target].[FactKugghusetId] = [Source].[FactKugghusetId]

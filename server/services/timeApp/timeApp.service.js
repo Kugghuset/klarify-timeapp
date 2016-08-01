@@ -353,8 +353,8 @@ export function insertData(context) {
 }
 
 const _dates = {
-  // dateFrom: moment().startOf('year').subtract(3, 'years').toDate(),
-  dateFrom: moment().startOf('month').toDate(),
+  dateFrom: moment().startOf('year').subtract(3, 'years').toDate(),
+  // dateFrom: moment().subtract(1, 'months').toDate(),
   dateTo: moment().endOf('year').toDate(),
   // dateFrom: moment(new Date('2014')).toDate(),
   // dateTo: moment(new Date('2014')).endOf('year').toDate(),
