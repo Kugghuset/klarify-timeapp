@@ -27,7 +27,7 @@
           <th class="clickable" :class="{ 'active': predicate === 'employeeName' }" @click="setOrder('employeeName')" colspan="2">Employee</th>
           <th class="clickable" :class="{ 'active': predicate === 'timeAppCategory.categoryName' }" @click="setOrder('timeAppCategory.categoryName')" colspan="4">Suggested category</th>
           <th class="clickable" :class="{ 'active': predicate === 'timeAppCategory.probabilityPercentage' }" @click="setOrder('timeAppCategory.probabilityPercentage')" colspan="2">Probability</th>
-          <th colspan="4">User set</th>
+          <!--<th colspan="4">User set</th>-->
           <th colspan="2">&nbsp;</th>
         </thead>
         <tbody>
@@ -38,8 +38,9 @@
             <td colspan="2">{{ report.employeeName }}</td>
             <td colspan="4">{{ report.timeAppCategory.categoryName }}</td>
             <td colspan="2">{{ report.timeAppCategory.probabilityPercentage || 0 }} %</td>
-            <td colspan="4"><su-select :options="categories" :value.sync="report.givenCategoryId"></su-select></td>
-            <td colspan="2"><su-button :is-loading="isLoading" :disabled="typeof report.givenCategoryId === 'undefined'" class="fill" :clicked="saveRule" :params="[report]" color="blue">Save</su-button></td>
+            <!--<td colspan="4"><su-select :options="categories" :value.sync="report.givenCategoryId"></su-select></td>-->
+            <!--<td colspan="2"><su-button :is-loading="isLoading" :disabled="typeof report.givenCategoryId === 'undefined'" class="fill" :clicked="saveRule" :params="[report]" color="blue">Save</su-button></td>-->
+            <td colspan="2"><su-button :is-loading="isLoading" class="fill" :clicked="openEdit" :params="[report]" color="green">Edit</su-button></td>
           </tr>
         </tbody>
       </table>
@@ -47,3 +48,42 @@
     </su-card>
   </section>
 </div>
+
+<su-modal v-ref:modal title="Edit category" :closed="onModalClosed">
+
+  <div slot="above">
+    <h3>Select category</h3>
+    <su-select :options="categories" :value.sync="currentReport.givenCategoryId"></su-select>
+  </div>
+
+  <section>
+    <hr>
+    <su-item header-title="Suggested category">
+      <div>{{ currentReport.timeAppCategory.categoryName }} ({{ currentReport.timeAppCategory.probabilityPercentage || 0 }} % probability)</div>
+    </su-item>
+    <su-item header-title="Date">
+      <div>{{ currentReport.date | date 'YYYY-MM-DD' }}</div>
+    </su-item>
+    <su-item header-title="Customer">
+      <div>{{ currentReport.customerName }}</div>
+    </su-item>
+    <su-item header-title="Project">
+      <div>{{ currentReport.projectName }}</div>
+    </su-item>
+    <su-item header-title="Employee">
+      <div>{{ currentReport.employeeName }}</div>
+    </su-item>
+    <su-item header-title="Comment">
+      <div v-html="currentReport.comment | marked"></div>
+    </su-item>
+  </section>
+
+  <div slot="under" class="grid grid-no-padding">
+    <section class="col-1-2">
+      <su-button class="fill" :is-loading="isLoading" :clicked="$refs.modal.close">Close</su-button>
+    </section>
+    <section class="col-1-2">
+      <su-button class="fill" :disabled="typeof currentReport.givenCategoryId === 'undefined'" :clicked="saveRule" :params="[currentReport]" :is-loading="isLoading" color="green">Save</su-button>
+    </section>
+  </div>
+</su-modal>

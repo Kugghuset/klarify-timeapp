@@ -21,6 +21,7 @@ const RouteSetRulesComponent = Vue.extend({
       predicate: 'timeAppCategory.probabilityPercentage',
       sortOrder: 'asc',
       filteredReports: this.setFilteredReports(),
+      currentReport: null,
     };
   },
   route: {
@@ -85,6 +86,7 @@ const RouteSetRulesComponent = Vue.extend({
       .then(function (reports) {
         this._reports = reports;
         this.isLoading = false;
+        this.$refs.modal.close();
       }.bind(this))
       .catch(err => {
       });
@@ -114,6 +116,14 @@ const RouteSetRulesComponent = Vue.extend({
         .value();
 
       return this.filteredReports;
+    },
+    openEdit: function (reportRule) {
+      this.currentReport = JSON.parse(JSON.stringify(reportRule));
+
+      this.$refs.modal.open();
+    },
+    onClose: function () {
+      this.currentReport = null;
     },
   },
 });

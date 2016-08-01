@@ -8,6 +8,7 @@ SELECT
   , [TAR].[employeeName]
   , [TAR].[employeeId]
   , [TAR].[categoryId]
+  , [TAR].[comment]
   , [TAC].[timeAppCategoryId] AS [timeAppCategory.timeAppCategoryId]
   , [TAC].[categoryId] AS [timeAppCategory.categoryId]
   , [C].[Category] AS [timeAppCategory.categoryName]
