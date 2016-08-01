@@ -24,7 +24,11 @@ import routes from './routes';
 routes(app, utils.logger);
 
 sql.on('error', (err) => {
-  utils.log(`The following error occured in Seriate:\n${JSON.stringify(err)}`);
+  utils.log(`The following error occured in Seriate:\n${JSON.stringify(err)}`, 'error', '');
+});
+
+sql.on('failed', (err) => {
+  utils.log(`The following fail occured in Seriate:\n${JSON.stringify(err)}`, 'error', '');
 });
 
 // Initialize the server

@@ -8,6 +8,7 @@ import moment from 'moment';
 
 import config from './../../config';
 import utils from '../../utils/utils';
+import category from './../category/category.service';
 
 import TimeAppEmployee from './../../api/timeAppEmployee/timeAppEmployee.db';
 import TimeAppReport from './../../api/timeAppReport/timeAppReport.db';
@@ -339,9 +340,11 @@ export function insertData(context) {
     .then(timeAppEmployees => Promise.resolve(employeesIntoReports(timeAppEmployees, _timeAppReports)))
     // Merge the new timeAppReports into the TimeAppReport table
     .then(TimeAppReport.mergeMany)
+    // Categorize all updated TimeAppReports
+    .then(data => category.categorizeAndStore())
     // Merge updated timeReports into actual live table
     .then(TimeAppReport.mergeToMaster)
-    .then(data => utils.logPromise(data, 'Completed inserting data.'))
+    .then(data => utils.logResolve(data, 'Completed inserting data.'))
     .catch(err => {
       utils.log('Failed to insert data', 'info')
       utils.log(err, 'error');
@@ -351,14 +354,17 @@ export function insertData(context) {
 
 const _dates = {
   dateFrom: moment().startOf('year').subtract(3, 'years').toDate(),
-  // dateFrom: moment().startOf('month').toDate(),
+  // dateFrom: moment().subtract(1, 'months').toDate(),
   dateTo: moment().endOf('year').toDate(),
+  // dateFrom: moment(new Date('2014')).toDate(),
+  // dateTo: moment(new Date('2014')).endOf('year').toDate(),
 };
 
-login(config.timeApp.email, config.timeApp.password)
-.then(context => generateReport(_.assign({}, context, _dates)))
-.then(insertData)
-.catch(err => utils.log(err, 'error'));
+// login(config.timeApp.email, config.timeApp.password)
+// .then(context => generateReport(_.assign({}, context, _dates)))
+// .then(insertData)
+// .catch(err => utils.log(err, 'error'));
+
 
 export default {
   baseUrl: baseUrl,

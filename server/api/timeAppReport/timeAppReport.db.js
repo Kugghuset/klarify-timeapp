@@ -232,7 +232,7 @@ export function mergeMany(timeAppReports) {
         query: sql.fromFile('./sql/timeAppReport.mergeTemp.sql')
           .replace(/\{table_name\}/ig, _tableName)
     }))
-    .then(data => utils.logPromise(data, 'Merged timeAppReports', 'info', { tableName: _tableName }))
+    .then(data => utils.logResolve(data, 'Merged timeAppReports', 'info', { tableName: _tableName }))
     .then(resolve)
     .catch(reject);
   });
@@ -250,7 +250,53 @@ export function mergeToMaster() {
     sql.execute({
       query: sql.fromFile('./sql/timeAppReport.mergeToMaster.sql')
     })
-    .then(data => utils.logPromise(data, `Completed merging TimeAppReportS into Fact table`, 'info'))
+    .then(data => utils.logResolve(data, `Completed merging TimeAppReportS into Fact table`, 'info'))
+    .catch(reject);
+  });
+}
+
+/**
+ * Finds all TimeAppReports where [isUpdated] = 1
+ *
+ * @return {Promise<{}[]>}
+ */
+export function findUpdated() {
+  return new Promise((resolve, reject) => {
+    sql.execute({
+      query: sql.fromFile('./sql/timeAppReport.findUpdated.sql'),
+    })
+    .then(resolve)
+    .catch(reject);
+  });
+}
+
+/**
+ * @param {{ dateTo: Date, dateFrom: Date }} dates
+ * @return {Promise<{}[]>}
+ */
+export function findCategorized(dates = {}) {
+  return new Promise((resolve, reject) => {
+    sql.execute({
+      query: sql.fromFile('./sql/timeAppReport.findCategorized.sql')
+        .replace(
+          '{and_where}',
+            _.filter([
+              !dates.dateFrom ? '' : `AND [TAR].[date] >= @dateFrom`,
+              !dates.dateTo ? '' : `AND [TAR].[date] <= @dateTo`,
+            ]).join(' ')
+        ),
+        params: {
+          dateFrom: {
+            type: sql.Date,
+            val: dates.dateFrom,
+          },
+          dateTo: {
+            type: sql.Date,
+            val: dates.dateTo,
+          },
+        },
+    })
+    .then(data => resolve(utils.objectify(data)))
     .catch(reject);
   });
 }
@@ -265,4 +311,6 @@ export default {
   createMany: createMany,
   mergeMany: mergeMany,
   mergeToMaster: mergeToMaster,
+  findUpdated: findUpdated,
+  findCategorized: findCategorized,
 }

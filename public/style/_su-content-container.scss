@@ -1,0 +1,23 @@
+.__su-content-container {
+  top: 0;
+  left: $size-menu;
+  height: 100vh;
+  position: absolute;
+  overflow-y: auto;
+  width: calc(100% - #{$size-menu});
+  transition: width $animation-speed, left $animation-speed;
+
+  .main-content {
+    padding: $size-m;
+  }
+
+  @include breakpoint(break-l) {
+    left: $size-menu-s;
+    width: calc(100% - #{$size-menu-s});
+  }
+
+  @include breakpoint(break-s) {
+    width: 100%;
+    left: 0;
+  }
+}

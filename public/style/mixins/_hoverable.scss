@@ -1,0 +1,59 @@
+@mixin background-hover-active($_color, $_amount_hover:5%, $_amount_active:10%, $func:"darken") {
+  & {
+    background-color: $_color;
+  }
+  &:hover {
+    @if $func == 'lighten' {
+      background-color: lighten($color: $_color, $amount: $_amount_hover);
+    } @else {
+      background-color: darken($color: $_color, $amount: $_amount_hover);
+    }
+  }
+  &:active, &.active {
+    @if $func == 'lighten' {
+      background-color: lighten($color: $_color, $amount: $_amount_active);
+    } @else {
+      background-color: darken($color: $_color, $amount: $_amount_active);
+    }
+  }
+}
+
+@mixin background-hover-active-focus($_color, $_amount_hover:5%, $_amount_active:10%, $func:"darken") {
+  & {
+    background-color: $_color;
+  }
+  &:hover {
+    @if $func == 'lighten' {
+      background-color: lighten($color: $_color, $amount: $_amount_hover);
+    } @else {
+      background-color: darken($color: $_color, $amount: $_amount_hover);
+    }
+  }
+  &:active, &.active, &:focus {
+    @if $func == 'lighten' {
+      background-color: lighten($color: $_color, $amount: $_amount_active);
+    } @else {
+      background-color: darken($color: $_color, $amount: $_amount_active);
+    }
+  }
+}
+
+@mixin color-hoverable-active($_color, $_amount_hover:5%, $_amount_active:10%, $func:"darken") {
+  & {
+    color: $_color;
+  }
+  &:hover {
+    @if $func == 'lighten' {
+      color: lighten($color: $_color, $amount: $_amount_hover);
+    } @else {
+      color: darken($color: $_color, $amount: $_amount_hover);
+    }
+  }
+  &:active, &.active {
+    @if $func == 'lighten' {
+      color: lighten($color: $_color, $amount: $_amount_active);
+    } @else {
+      color: darken($color: $_color, $amount: $_amount_active);
+    }
+  }
+}

@@ -1,0 +1,53 @@
+.__su-select {
+  * {
+    font-size: $font-size-s;
+    transition: background $animation-speed, border $animation-speed;
+  }
+  .selectize-input {
+    border-radius: $size-xs;
+    border: thin none;
+    background-color: $white;
+    box-shadow: none;
+    padding: $size-s;
+    box-shadow: 0px 1px 5px rgba($color: $black, $alpha: 0.1);
+
+    &:hover {
+      box-shadow: 0px 2px 5px rgba($color: $black, $alpha: 0.1);
+    }
+
+    &.dropdown-active {
+      border-radius: $size-xs $size-xs 0  0;
+      background-color: $blue;
+      color: $white;
+      box-shadow: 0px 2px 5px rgba($color: $black, $alpha: 0.1);
+
+      &.selectize-control.single, &.selectize-input.input-active {
+        background-color: $blue;
+      }
+    }
+
+    input {
+      font-size: inherit;
+      color: inherit;
+    }
+  }
+  .selectize-dropdown {
+    border-radius: 0 0 $size-xs $size-xs;
+    border: thin none;
+    box-shadow: 0px 2px 5px rgba($color: $black, $alpha: 0.1);
+
+    .selectize-dropdown-content {
+      .option {
+        background-color: $gray-light;
+        &:hover, &.active {
+          background-color: lighten($color: $gray-light, $amount: 10%);
+        }
+
+        &:last-of-type {
+          border-radius: 0 0 $size-xs $size-xs;
+        }
+      }
+
+    }
+  }
+}

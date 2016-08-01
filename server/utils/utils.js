@@ -23,9 +23,14 @@ export const logger = _logger;
  */
 export const log = (message, level = "info", meta) => _.isUndefined(meta) ? logger.log(level, message) : logger.log(level, message, meta);
 
-export function logPromise(data, message, level, meta) {
+export function logResolve(data, message, level, meta) {
   log(message, level, meta);
   return Promise.resolve(data);
+}
+
+export function logReject(data, message, level, meta) {
+  log(message, level, meta);
+  return Promise.reject(data);
 }
 
 /**
@@ -377,12 +382,6 @@ export const createManySQL = (collection, tableName, dirname, baseName, mainId, 
 
   let _request;
 
-  /**
-   * TODO: Allow for batch size to be set.
-   *       Apparently Azure doesn't like it when we inserts
-   *       too many rows at once.
-   */
-
   // Create a request instace and make the bulk operation
   return getConnection()
     .then((connection) => {
@@ -425,6 +424,10 @@ export function createManySQLOpts(context = {}) {
     returnValues,
     batchSize,
   } = context;
+
+  if (!collection || !collection.length) {
+    return Promise.resolve([]);
+  }
 
   // Get the promises
   const _imports = !batchSize
@@ -556,12 +559,31 @@ function sequence(promises, output) {
     });
 }
 
+/**
+ * @param {{}[]} coll
+ * @param {String} paramName
+ * @return {Any}
+ */
+export function firstWhereDefined(coll, paramName) {
+  return _.find(coll, item => !_.isUndefined(_.get(item, paramName)));
+}
+
+/**
+ * @param {{}[]} coll
+ * @param {String} paramName
+ * @return {Any}
+ */
+export function firstDefined(coll, paramName) {
+  return _.get(firstWhereDefined(coll, paramName), paramName);
+}
+
 export default {
   http: http,
   logger: logger,
   sql: _sql,
   log: log,
-  logPromise: logPromise,
+  logResolve: logResolve,
+  logReject: logReject,
   handleError: handleError,
   escapeRegex: escapeRegex,
   literalRegExp: literalRegExp,
@@ -580,4 +602,6 @@ export default {
   contains: contains,
   replace: replace,
   sequence: sequence,
+  firstWhereDefined: firstWhereDefined,
+  firstDefined: firstDefined,
 }

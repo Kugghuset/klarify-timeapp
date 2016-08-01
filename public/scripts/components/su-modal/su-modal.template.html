@@ -1,0 +1,8 @@
+<div v-if="modalOpen" class="__su-modal" :class="{ 'open': isOpen }" v-rubber-scroll v-top-at-scroll-pos="'.__su-content-container'">
+  <div class="darkout" @click="cancel"></div>
+  <su-card :title="title">
+    <slot slot="above" name="above"></slot>
+    <slot></slot>
+    <slot slot="under" name="under"></slot>
+  </su-card>
+</div>

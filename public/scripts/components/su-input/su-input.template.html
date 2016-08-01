@@ -1,0 +1,6 @@
+<div class="__su-input">
+  <label :class="{ 'center-text': centerText, 'big-text': bigText }">
+    <input type="{{ type }}" id="{{ _id }}" v-model="value">
+    <span :class="{ 'has-value': hasValue() }">{{ placeholder }}</span>
+  </label>
+</div>

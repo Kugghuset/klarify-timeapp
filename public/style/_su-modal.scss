@@ -1,0 +1,70 @@
+/**
+ * TODO:
+ * - Fix issue where the darkout doesn't fill background completely
+ *   when the content is too tall for one screen.
+ */
+.__su-modal {
+  display: block;
+  transition: transform $animation-speed, opacity $animation-speed;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  overflow-x: auto;
+  min-height: 100vh;
+  background-color: rgba(0,0,0,0.4);
+  opacity: 0;
+  z-index: 3;
+
+  @include breakpoint(break-s) {
+    position: absolute;
+  }
+
+  .darkout {
+    content: "";
+    display: block;
+    background-color: transparent;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    min-height: 200px;
+    z-index: 1;
+  }
+
+  .__su-card {
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    max-width: 90%;
+    width: 450px;
+    left: 50%;
+    box-shadow: 4px 4px 15px rgba(0,0,0,0.2);
+    color: #080808;
+    transform: translate3d(-50%, 0, 0) scale(0, 0);
+    transition: transform $animation-speed;
+    background-color: $white;
+    margin-top: 50px;
+    margin-bottom: 50px;
+
+    [slot=above] {
+      padding: $size-s;
+    }
+    [slot=under] {
+      padding: $size-s;
+    }
+    .padded {
+      padding: $size-s;
+    }
+  }
+
+  &.open {
+    opacity: 1;
+    .darkout {
+      opacity: 1;
+    }
+
+    .__su-card {
+      transform: translate3d(-50%, 0, 0) scale(1, 1);
+    }
+  }
+}
