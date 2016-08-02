@@ -6,3 +6,7 @@ typings
 **/bundle.js
 .server/**
 **/.bulk_size.js
+.uploads/**
+.log
+dist/
+.logs

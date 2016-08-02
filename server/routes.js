@@ -37,5 +37,6 @@ export default (app, log) => {
   app.use('/services/time-app', require('./services/timeApp').default);
   app.use('/services/category', require('./services/category').default);
   app.use('/services/schedule', require('./services/schedule').default);
+  app.use('/services/logs', require('./services/logs').default);
   /// Stop inject services ///
 }
