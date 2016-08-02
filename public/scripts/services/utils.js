@@ -201,6 +201,20 @@ export function isIDevice() {
   return _.some(devices, device => device === navigator.platform);
 }
 
+/**
+ * @param {Array} coll Collection to check *match* against
+ * @param {Any|Any[]} match Item or items to look for in *coll*
+ * @return {Boolean}
+ */
+export function contains(coll, match) {
+  const _match = _.isArray(match)
+    ? match
+    : [match];
+
+  // It's nothing and thus cannot contain anything
+  return !!~_.indexOf(coll, match);
+}
+
 export default {
   cookie: cookie,
   jsonParseOrValue: jsonParseOrValue,
@@ -208,4 +222,5 @@ export default {
   storage: storage,
   replace: replace,
   isIDevice: isIDevice,
+  contains: contains,
 }

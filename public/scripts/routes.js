@@ -4,6 +4,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 
 import components from './components/components';
+import { contains } from './services/utils';
 
 Vue.use(VueRouter);
 
@@ -40,6 +41,17 @@ router.map({
 router.redirect({
   '*': '/trigger-refresh'
 });
+
+
+// Ensure routes which require auth is only accessible when authenticated
+router.beforeEach((transition) => {
+  if (contains(['setRules', 'triggerRefresh'], transition.to.name)) {
+    transition.next();
+  } else {
+    transition.redirect('triggerRefresh');
+  }
+});
+
 
 router.start(App, '#app-mount');
 
