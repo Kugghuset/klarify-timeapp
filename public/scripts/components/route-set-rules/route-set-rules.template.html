@@ -85,5 +85,6 @@
     <section class="col-1-2">
       <su-button class="fill" :disabled="typeof currentReport.givenCategoryId === 'undefined'" :clicked="saveRule" :params="[currentReport]" :is-loading="isLoading" color="green">Save</su-button>
     </section>
+    <su-loader :is-loading="isLoading"></su-loader>
   </div>
 </su-modal>

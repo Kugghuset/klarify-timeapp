@@ -371,6 +371,21 @@ export function loginAndInsert(dateFrom, dateTo) {
   .then(insertData);
 }
 
+export function triggerReport(req, res) {
+  const dateFrom = moment().subtract(30, 'days').toDate();
+  const dateTo = moment().toDate();
+
+  utils.log('Running manually triggered update.', 'info', { dateFrom, dateTo });
+
+  return loginAndInsert(dateFrom, dateTo)
+  .then(data => utils.logResolve(data, 'Manually triggered update completed', 'info', { dateFrom, dateTo }))
+  .then(data => res.status(200).send('OK'))
+  .catch(err => {
+    utils.log('Manually triggered updated failed', 'error', { err: err.toString(),  dateFrom, dateTo });
+    utils.handleError(res, err);
+  })
+}
+
 export default {
   baseUrl: baseUrl,
   reportKeysEnum: reportKeysEnum,
@@ -378,4 +393,5 @@ export default {
   generateReport: generateReport,
   insertData: insertData,
   loginAndInsert: loginAndInsert,
+  triggerReport: triggerReport,
 }
