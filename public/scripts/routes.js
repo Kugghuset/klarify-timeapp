@@ -27,14 +27,18 @@ router.map({
     subRoutes: {
       '/set-rules': {
         name: 'setRules',
-        component:  components.routeSetRules,
+        component: components.routeSetRules,
       },
-    }
+      '/trigger-refresh': {
+        name: 'triggerRefresh',
+        component: components.routeTriggerRefresh,
+      },
+    },
   },
 });
 
 router.redirect({
-  '*': '/set-rules'
+  '*': '/trigger-refresh'
 });
 
 router.start(App, '#app-mount');

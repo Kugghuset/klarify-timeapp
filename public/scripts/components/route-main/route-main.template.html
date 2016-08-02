@@ -1,4 +1,9 @@
-<su-header title="Klarify - TimeApp"></su-header>
-<main class="__route-main grid padded-top padded-bottom-thick">
-  <router-view></router-view>
-</main>
+<su-hamburger class="menu-toggle" :is-open.sync="menuOpen"></su-hamburger>
+<su-sidebar :routes="actualRoutes" :menu-open.sync="menuOpen">
+</su-sidebar>
+<su-content-container>
+  <su-header title="Klarify - TimeApp"></su-header>
+  <main class="__route-main main-content grid padded-top padded-bottom-thick">
+    <router-view></router-view>
+  </main>
+</su-content-container>

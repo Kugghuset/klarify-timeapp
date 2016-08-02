@@ -365,11 +365,33 @@ const _dates = {
 // .then(insertData)
 // .catch(err => utils.log(err, 'error'));
 
+export function loginAndInsert(dateFrom, dateTo) {
+  return login(config.timeApp.email, config.timeApp.password)
+  .then(context => generateReport(_.assign({}, context, _dates)))
+  .then(insertData);
+}
+
+export function triggerReport(req, res) {
+  const dateFrom = moment().subtract(30, 'days').toDate();
+  const dateTo = moment().toDate();
+
+  utils.log('Running manually triggered update.', 'info', { dateFrom, dateTo });
+
+  return loginAndInsert(dateFrom, dateTo)
+  .then(data => utils.logResolve(data, 'Manually triggered update completed', 'info', { dateFrom, dateTo }))
+  .then(data => res.status(200).send('OK'))
+  .catch(err => {
+    utils.log('Manually triggered updated failed', 'error', { err: err.toString(),  dateFrom, dateTo });
+    utils.handleError(res, err);
+  })
+}
 
 export default {
   baseUrl: baseUrl,
   reportKeysEnum: reportKeysEnum,
   login: login,
   generateReport: generateReport,
-  structureReport: insertData,
+  insertData: insertData,
+  loginAndInsert: loginAndInsert,
+  triggerReport: triggerReport,
 }

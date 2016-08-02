@@ -25,6 +25,8 @@ import SuHamburger from './su-hamburger/su-hamburger.component';
 import SuRange from './su-range/su-range.component';
 import RouteSetRules from './route-set-rules/route-set-rules.component';
 import RouteMain from './route-main/route-main.component';
+import RouteTriggerRefresh from './route-trigger-refresh/route-trigger-refresh.component';
+import SuLoader from './su-loader/su-loader.component';
 /// Stop inject imports ///
 
 export default {
@@ -51,5 +53,7 @@ export default {
   'suRange': SuRange,
   'routeSetRules': RouteSetRules,
   'routeMain': RouteMain,
+  'routeTriggerRefresh': RouteTriggerRefresh,
+  'suLoader': SuLoader,
   /// Stop inject components ///
 }
